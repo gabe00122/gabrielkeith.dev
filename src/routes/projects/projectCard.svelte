@@ -10,6 +10,8 @@
 	const { name, description, demo, repo, writeup }: Props = $props();
 </script>
 
+<!-- Links are either external URLs or already resolved by the caller. -->
+<!-- eslint-disable svelte/no-navigation-without-resolve -->
 <section class="project">
 	<header class="pc-header">
 		<h2 class="item-title"><a href={repo}>{name}</a></h2>

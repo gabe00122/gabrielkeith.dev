@@ -197,7 +197,7 @@
 	style="--tokens-height: {tokensHeight}; --viz-token-text-color: {tokenTextColor};"
 >
 	<div class="tokens">
-		{#each episode.tokens as token, index}
+		{#each episode.tokens as token, index (index)}
 			{@const masked = tokenIsMasked(index)}
 			<span
 				bind:this={tokenElements[index]}

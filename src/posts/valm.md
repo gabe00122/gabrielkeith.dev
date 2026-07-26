@@ -1,5 +1,4 @@
 ---
-
 title: Ladder style value transformers for LLM fine tuning
 description: Tuning Qwen3 4b with a custom RL architecture from scratch
 date: '2026-07-12'
@@ -51,6 +50,7 @@ This is effectively [ladder side-tuning](https://arxiv.org/abs/2206.06522) with 
 **Value encode** — every nth base latent is projected into the value stream through a stop-gradient SwiGLU block, so gradients from the value loss never flow back into the base model. This is so the value network can selectively filter latents from the base model into its residual stream. This prevents the residuals from the base model from drowning out the signal in the value network's residual stream; the gating in SwiGLU allows existing information to be protected.
 
 ### Stop-gradient risks
+
 The stop gradients allow us to use separate Adam optimizers for value and policy and protect the policy from the value network's gradients, but they create the limitation that the value network cannot request information from the base model; it can only observe what happens to be there. This risk is hopefully mitigated by (1) taking latents from multiple and potentially redundant locations and (2) providing the value network with its own attention layers.
 
 ## Environment
@@ -62,8 +62,9 @@ Although it could be applied to different tasks, I tested this method on Wordle.
 The reward function is split into two components, both designed so the maximum return is 1.0.
 
 Partial credit, granted once per slot, the first time a slot is revealed:
-* +0.025 the first time slot *i* is yellow or green
-* +0.025 the first time slot *i* is green
+
+- +0.025 the first time slot _i_ is yellow or green
+- +0.025 the first time slot _i_ is green
 
 Each of the 5 slots can contribute at most 0.05, so partial credit tops out at 0.25.
 
@@ -81,7 +82,6 @@ The Qwen3 implementation, continuous-batching-based rollout generator, and train
 
 Continuous-batching inference is compiled into a JAX JIT step so that tokens are generated in a `jax.lax.while_loop` until an entire turn is ready. Despite the implementation being relatively simple, its batched inference throughput rivals vLLM for short context lengths (~8000 tokens/s). Measured decode-only (excluding prefill), this implementation achieves ~8,267 tokens/s versus vLLM's ~7,145 tokens/s on the same hardware. However, this comparison is decode-only: vLLM supports prefill while this implementation does not, so end-to-end throughput on real workloads is lower than these numbers suggest. Slots are kept in VRAM until the episode is complete, which means prompt caching requires no loading or offloading from VRAM. The downside is that the environments need to be fast so they do not leave slots idle for long. To keep the environments as fast as possible (and because it's fun!), they are implemented in Rust.
 
-
 Data from the rollout generation is passed through a circular buffer that yields batches to the update function when it has accumulated a full update batch worth of episodes. The update function uses the same model weights as rollout generation, saving VRAM.
 
 ## Loss function
@@ -94,14 +94,14 @@ The value network is warmed up on frozen policy weights so that online learning 
 
 After the warmup we can generate value approximations, but Qwen3 4B Instruct has poor performance before training, around a 0-1% solve rate.
 <EpisodeViewer
-    metric="value"
-    episodes={[
-  		{ url: "/blog/valm/vt-0.json", label: "One" },
-  		{ url: "/blog/valm/vt-1.json", label: "Two" },
-      { url: "/blog/valm/vt-2.json", label: "Three" },
-      { url: "/blog/valm/vt-3.json", label: "Four" }
-    ]}
-  />
+metric="value"
+episodes={[
+{ url: "/blog/valm/vt-0.json", label: "One" },
+{ url: "/blog/valm/vt-1.json", label: "Two" },
+{ url: "/blog/valm/vt-2.json", label: "Three" },
+{ url: "/blog/valm/vt-3.json", label: "Four" }
+]}
+/>
 
 In the episodes above, you can see that the model doesn't respect the constraints and even guesses six-letter words at times.
 
@@ -118,41 +118,41 @@ The same policy (and value, where applicable) learning rates were used for all o
 
 **Shared settings** (all runs unless noted below):
 
-| | Setting | Value |
-|---|---|---|
-| **Model** | Base model | Qwen3-4B-Instruct-2507 |
-| | Max sequence length | 1024 |
-| **Policy (LoRA)** | Rank | 64 |
-| | Applied to | Attention + MLP |
-| | Optimizer | AdamW, lr 4e-5, β₁ 0.9, β₂ 0.98, wd 0.01 |
-| | Schedule | Cosine, 10% warmup |
-| | Grad norm clip | 1.0 |
-| **Value transformer** | Layers | 12 |
-| | Embed dim | 256 |
-| | Attention | 8 heads (8 KV), head dim 32 |
-| | MLP width | 512 |
-| | Latent encoder rank | 256 |
-| | Optimizer | AdamW, lr 1e-4, β₁ 0.9, β₂ 0.98, wd 0.01 |
-| **PPO loss** | Clip range | 0.2 low / 0.28 high |
-| | GAE λ | 0.95 |
-| | Discount | 1.0 (0.97 at turn boundaries) |
-| **Batch** | Rollout batch size | 64
-| | Update batch size | 16
-| | GRPO group size | 8
-| | Total batches | 25,000
-
+|                       | Setting             | Value                                    |
+| --------------------- | ------------------- | ---------------------------------------- |
+| **Model**             | Base model          | Qwen3-4B-Instruct-2507                   |
+|                       | Max sequence length | 1024                                     |
+| **Policy (LoRA)**     | Rank                | 64                                       |
+|                       | Applied to          | Attention + MLP                          |
+|                       | Optimizer           | AdamW, lr 4e-5, β₁ 0.9, β₂ 0.98, wd 0.01 |
+|                       | Schedule            | Cosine, 10% warmup                       |
+|                       | Grad norm clip      | 1.0                                      |
+| **Value transformer** | Layers              | 12                                       |
+|                       | Embed dim           | 256                                      |
+|                       | Attention           | 8 heads (8 KV), head dim 32              |
+|                       | MLP width           | 512                                      |
+|                       | Latent encoder rank | 256                                      |
+|                       | Optimizer           | AdamW, lr 1e-4, β₁ 0.9, β₂ 0.98, wd 0.01 |
+| **PPO loss**          | Clip range          | 0.2 low / 0.28 high                      |
+|                       | GAE λ               | 0.95                                     |
+|                       | Discount            | 1.0 (0.97 at turn boundaries)            |
+| **Batch**             | Rollout batch size  | 64                                       |
+|                       | Update batch size   | 16                                       |
+|                       | GRPO group size     | 8                                        |
+|                       | Total batches       | 25,000                                   |
 
 **Per-method differences:**
 
-| Run | Differs from shared config |
-|---|---|
-| VT + HL-Gauss | — (reference config). HL-Gauss head: 51 bins, σ 0.02, support [−0.1, 1.1] |
-| VT + MSE | MSE value head |
-| Last-latent only | Value net reads only the final hidden state; 0 value transformer layers |
-| Monte Carlo | GAE λ = 1.0 (turn λ also 1.0) |
-| GRPO | No critic; group size 8; group-normalized sequence-level advantage |
+| Run              | Differs from shared config                                                |
+| ---------------- | ------------------------------------------------------------------------- |
+| VT + HL-Gauss    | — (reference config). HL-Gauss head: 51 bins, σ 0.02, support [−0.1, 1.1] |
+| VT + MSE         | MSE value head                                                            |
+| Last-latent only | Value net reads only the final hidden state; 0 value transformer layers   |
+| Monte Carlo      | GAE λ = 1.0 (turn λ also 1.0)                                             |
+| GRPO             | No critic; group size 8; group-normalized sequence-level advantage        |
 
 ### Compute
+
 When benchmarking the update function (the only place GRPO and PPO differ in this implementation), GRPO is only 6% faster than PPO with the ~25.8M-parameter value transformer on an RTX 5090. This is because the latents used to calculate the policy loss can be reused to calculate the value loss, and the value transformer is tiny compared to the base model, comprising only 0.6% of the total parameters.
 
 ### Results
@@ -165,7 +165,6 @@ When benchmarking the update function (the only place GRPO and PPO differ in thi
 
 Looking at solve rate, the comparison between HL-Gauss and MSE was a null result. I was not able to reproduce the result from the Stop Regressing paper (on the same environment!).
 
-
 Every model trained with the value transformer was ahead of every model trained with the last latent only (although there was one seed that came very close). The value transformer learned in a consistent band, while last-latent-only had significantly more per-seed variance. Monte Carlo learning with $\lambda = 1.0$ diverged completely in 50% of runs; here, I plotted only the survivors (3 out of 6, this config got extra seeds). GRPO from a cold start gets stuck maximizing partial-credit rewards and never learns to solve the game consistently. From a warm start, GRPO consistently learns but underperforms the value transformer.
 
 <Image
@@ -174,7 +173,6 @@ Every model trained with the value transformer was ahead of every model trained 
   altText="Four line charts compare mean Wordle episode reward over 25,000 update batches. HL-Gauss and MSE overlap and approach 0.99. The value transformer learns faster and more consistently than the last-latent-only critic. Monte Carlo trails the value transformer, ending near 0.96 versus 0.99. Warm-start GRPO approaches 0.97 more slowly, while cold-start GRPO improves only from about 0.12 to 0.25, indicating gains in partial credit without consistent wins."
 />
 Total reward tells a similar story, although you can see that cold-start GRPO improves on partial credit but not on solve rate.
-
 
 <Image
   url="/blog/valm/vs_vt_turns.webp"
@@ -197,13 +195,13 @@ Comparing the value transformer and the last-latent-only model on explained vari
 Here are a few episodes from the end of value-transformer training.
 
 <EpisodeViewer
-  metric="advantage"
-  episodes={[
-		{ url: "/blog/valm/vt-399996.json", label: "One" },
-		{ url: "/blog/valm/vt-399997.json", label: "Two" },
-    { url: "/blog/valm/vt-399998.json", label: "Three" },
-    { url: "/blog/valm/vt-399999.json", label: "Four" }
-  ]}
+metric="advantage"
+episodes={[
+{ url: "/blog/valm/vt-399996.json", label: "One" },
+{ url: "/blog/valm/vt-399997.json", label: "Two" },
+{ url: "/blog/valm/vt-399998.json", label: "Three" },
+{ url: "/blog/valm/vt-399999.json", label: "Four" }
+]}
 />
 
 You can see the value step up at the turn-level discount and step down when the partial reward is banked. The model will sometimes output no answer tokens in context before committing to an option. Notably, this context strategy resembles enumerating options under the current constraints, but they are often not real words until the model commits to a guess.
@@ -213,13 +211,13 @@ You can see the value step up at the turn-level discount and step down when the 
 Warm start GRPO episodes look qualitatively different, the model gathers information until the 5th or 6th guess and then often responds with the current answer, this shows the model is likely incentivized to maximize information before finishing the game since this is the safest strategy when turn discounting isn't applied.
 
 <EpisodeViewer
-  metric="value"
-  episodes={[
-		{ url: "/blog/valm/grpo-399699.json", label: "One" },
-		{ url: "/blog/valm/grpo-399799.json", label: "Two" },
-    { url: "/blog/valm/grpo-399899.json", label: "Three" },
-    { url: "/blog/valm/grpo-399999.json", label: "Four" }
-  ]}
+metric="value"
+episodes={[
+{ url: "/blog/valm/grpo-399699.json", label: "One" },
+{ url: "/blog/valm/grpo-399799.json", label: "Two" },
+{ url: "/blog/valm/grpo-399899.json", label: "Three" },
+{ url: "/blog/valm/grpo-399999.json", label: "Four" }
+]}
 />
 
 ## Next steps

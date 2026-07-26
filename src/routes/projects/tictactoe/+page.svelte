@@ -103,7 +103,7 @@
 	<div class="control-group">Loading Model...</div>
 {:else}
 	<div class="board">
-		{#each game.board as boardCell, index}
+		{#each game.board as boardCell, index (index)}
 			{#if aiHasMoved && showPreferences && previousGame.board[index] === undefined}
 				<Cell cell={boardCell} on:click={() => onCellClick(index)} preference={preferences[index]}
 				></Cell>

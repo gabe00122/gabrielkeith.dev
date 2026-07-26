@@ -1,4 +1,3 @@
-
 <figure class="arch-figure">
 	<svg
 		class="arch"

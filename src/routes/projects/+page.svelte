@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ProjectCard from './projectCard.svelte';
 	import Seo from '$lib/components/seo.svelte';
+	import { resolve } from '$app/paths';
 </script>
 
 <Seo
@@ -21,20 +22,20 @@
 		/>
 		<ProjectCard
 			name="Mapox Trainer"
-			writeup="/posts/transformer_rl"
+			writeup={resolve('/posts/[slug]', { slug: 'transformer_rl' })}
 			description="High performance Jax based multi-agent ppo implementation with first class support for transformers."
 			repo="https://github.com/gabe00122/mapox-trainer"
 		/>
 		<ProjectCard
 			name="VALM"
-			writeup="/posts/valm"
+			writeup={resolve('/posts/[slug]', { slug: 'valm' })}
 			description="JAX-based framework for online RL with LLMs. Custom Qwen3 implementation with LoRA support."
 			repo="https://github.com/gabe00122/valm"
 		/>
 		<ProjectCard
 			name="Self Play Tic-Tac-Toe"
 			description="Learning to match minmax in tictactoe with less than a minute of self play on a single GPU."
-			demo="/projects/tictactoe"
+			demo={resolve('/projects/tictactoe')}
 			repo="https://github.com/gabe00122/tictactoe-rl"
 		/>
 		<ProjectCard

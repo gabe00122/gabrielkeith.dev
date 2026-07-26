@@ -6,8 +6,7 @@
 
 :root {
 	--pico-font-family-sans-serif:
-		'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue',
-		sans-serif;
+		'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
 	--pico-font-family-monospace:
 		'JetBrains Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, monospace;
 	--pico-font-family: var(--pico-font-family-sans-serif);

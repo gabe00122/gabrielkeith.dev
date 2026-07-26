@@ -47,6 +47,8 @@
 	let metricOptions = $derived(episode ? ['none', ...Object.keys(episode.tokenMetrics)] : ['none']);
 	let policyTokenMask = $derived(episode ? getPolicyTokenMask(episode, metricKey) : null);
 
+	// Plain (non-reactive) memo of decoded episodes; nothing renders from it directly.
+	// eslint-disable-next-line svelte/prefer-svelte-reactivity
 	const cache = new Map<string, Episode>();
 	let loadToken = 0;
 
@@ -158,7 +160,9 @@
 		{#if loadError}
 			<div class="state">Could not load episode.</div>
 		{:else if episode === null}
-			<div class="state loading-state" style="--tokens-height: {tokensHeight};">Loading episode…</div>
+			<div class="state loading-state" style="--tokens-height: {tokensHeight};">
+				Loading episode…
+			</div>
 		{:else}
 			<div class="toolbar">
 				<label>
@@ -280,9 +284,10 @@
 	.loading-state {
 		display: flex;
 		box-sizing: border-box;
-		min-height: calc(var(--episode-toolbar-height) + var(--episode-graph-height) + var(--tokens-height));
+		min-height: calc(
+			var(--episode-toolbar-height) + var(--episode-graph-height) + var(--tokens-height)
+		);
 		align-items: center;
 		justify-content: center;
 	}
-
 </style>

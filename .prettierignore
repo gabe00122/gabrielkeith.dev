@@ -2,3 +2,9 @@
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Generated/exported data and model weights — not hand-edited source
+static
+
+# Local tooling state
+.claude

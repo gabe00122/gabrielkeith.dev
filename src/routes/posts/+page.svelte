@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Seo from '$lib/components/seo.svelte';
 	import { formatDate } from '$lib/utils';
+	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 </script>
@@ -13,11 +14,11 @@
 		<p class="page-subtitle">Occasional writing on my projects and ideas.</p>
 	</hgroup>
 	<div class="item-list">
-		{#each data.posts as post}
+		{#each data.posts as post (post.slug)}
 			<article class="post">
 				<time class="meta" datetime={post.date}>{formatDate(post.date)}</time>
 				<h2 class="item-title">
-					<a href={'posts/' + post.slug}>{post.title}</a>
+					<a href={resolve('/posts/[slug]', { slug: post.slug })}>{post.title}</a>
 				</h2>
 				<p class="item-description">{post.description}</p>
 			</article>

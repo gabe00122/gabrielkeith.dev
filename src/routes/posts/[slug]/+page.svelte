@@ -19,8 +19,9 @@
 	}
 
 	$effect(() => {
-		data.content;
-		if (!proseEl) return;
+		if (!data.content || !proseEl) {
+			return;
+		}
 		const items = Array.from(proseEl.querySelectorAll<HTMLElement>('h2[id], h3[id]')).map((h) => ({
 			id: h.id,
 			text: headingLabel(h),
