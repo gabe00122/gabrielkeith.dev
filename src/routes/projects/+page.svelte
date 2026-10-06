@@ -18,6 +18,7 @@
 		<ProjectCard
 			name="Mapox"
 			description="JAX-native, multi-agent, partially-observable gridworld environments with a shared observation/action format."
+			demo={resolve('/projects/mapox')}
 			repo="https://github.com/gabe00122/mapox"
 		/>
 		<ProjectCard

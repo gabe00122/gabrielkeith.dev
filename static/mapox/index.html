@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>mapox</title>
+    <!-- empty, purely so the page doesn't 404 on /favicon.ico -->
+    <link rel="icon" href="data:," />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: black;
+      }
+      /* The canvas is sized by CSS; eframe only sets the backing-store
+         resolution (CSS size x DPR). Leaving the CSS size off instead makes
+         the element grow to its backing size and feedback-loop bigger on
+         every ResizeObserver delivery. */
+      canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      /* Sits over the canvas until the app starts: the wasm and the policy
+         are multi-MB downloads and the first frame is a long way off, so an
+         unexplained black page is the default experience without this. */
+      #status {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: #888;
+        font:
+          13px/1.5 ui-monospace,
+          monospace;
+      }
+      .panel {
+        width: min(320px, 100%);
+        display: grid;
+        gap: 1.25rem;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        row-gap: 0.4rem;
+      }
+      .size {
+        color: #555;
+        font-variant-numeric: tabular-nums;
+      }
+      .bar {
+        grid-column: 1 / -1;
+        height: 2px;
+        background: #222;
+      }
+      .fill {
+        width: 0;
+        height: 100%;
+        background: #bbb;
+      }
+      .msg {
+        min-height: 1.5em;
+        text-align: center;
+        white-space: pre-wrap;
+      }
+      #status.error .row {
+        display: none;
+      }
+      #status.error .msg {
+        color: #e06c75;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="mapox-canvas"></canvas>
+    <div id="status">
+      <div class="panel">
+        <div class="row" id="wasm-row">
+          <span>wasm</span><span class="size"></span>
+          <div class="bar"><div class="fill"></div></div>
+        </div>
+        <div class="row" id="policy-row">
+          <span>policy</span><span class="size"></span>
+          <div class="bar"><div class="fill"></div></div>
+        </div>
+        <div class="msg"></div>
+      </div>
+    </div>
+    <!--
+      mapox_web.js and mapox_web_bg.wasm are generated in lockstep by the
+      wasm-bindgen CLI (scripts/build_web.py) -- don't edit or pin them by hand.
+      policy.safetensors is staged by the same script's --policy flag.
+    -->
+    <script type="module">
+      import init, { WebHandle } from "./mapox_web.js";
+
+      const status = document.getElementById("status");
+      const msg = status.querySelector(".msg");
+      const say = (text) => (msg.textContent = text);
+
+      const mb = (n) => (n / 1e6).toFixed(1);
+
+      // Fetches `url` and returns a Response that streams the same body while
+      // driving the progress row. Handing init() a Response (not the bytes)
+      // keeps instantiateStreaming, so the wasm compiles as it downloads.
+      async function tracked(url, rowId) {
+        const row = document.getElementById(rowId);
+        const fill = row.querySelector(".fill");
+        const size = row.querySelector(".size");
+
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(
+            `${url}: ${response.status} ${response.statusText}\n` +
+              "stage it with: uv run scripts/build_web.py --policy <path>",
+          );
+        }
+        // Unknown when the header is absent, or when the body is compressed
+        // and the header counts different bytes than the stream yields; the
+        // bar then sits empty until the download completes.
+        const total = response.headers.has("Content-Encoding")
+          ? 0
+          : Number(response.headers.get("Content-Length") ?? 0);
+
+        let loaded = 0;
+        const show = () => {
+          size.textContent = total
+            ? `${mb(loaded)} / ${mb(total)} MB`
+            : `${mb(loaded)} MB`;
+          if (total) fill.style.width = `${(100 * loaded) / total}%`;
+        };
+        show();
+        const body = response.body.pipeThrough(
+          new TransformStream({
+            transform(chunk, controller) {
+              loaded += chunk.byteLength;
+              show();
+              controller.enqueue(chunk);
+            },
+            flush() {
+              fill.style.width = "100%";
+              size.textContent = `${mb(loaded)} MB`;
+            },
+          }),
+        );
+        return new Response(body, { headers: response.headers });
+      }
+
+      // ?seed=N seeds the action sampling, the same knob the native demo
+      // takes as a flag.
+      const seed = Number(new URLSearchParams(location.search).get("seed") ?? 0);
+
+      try {
+        // Inference is CPU-side (burn's flex backend), but eframe's renderer
+        // is built against a wgpu with no WebGL fallback, so the page needs an
+        // adapter to draw. Checked here because a missing one surfaces as a
+        // wasm panic ("unreachable") that says nothing about what is actually
+        // wrong.
+        if (!navigator.gpu) {
+          throw new Error(
+            "this browser has no WebGPU (navigator.gpu is undefined)",
+          );
+        }
+        if (!(await navigator.gpu.requestAdapter())) {
+          throw new Error(
+            "WebGPU is present but no adapter was granted.\n" +
+              "Check chrome://gpu; a browser restart usually fixes it.",
+          );
+        }
+
+        // Both downloads run side by side; the policy doesn't need the wasm
+        // until handle.start().
+        const [, policy] = await Promise.all([
+          init(tracked("./mapox_web_bg.wasm", "wasm-row")),
+          tracked("./policy.safetensors", "policy-row").then((response) =>
+            response.bytes(),
+          ),
+        ]);
+
+        // eframe (seen on 0.35) started in a background tab never paints its first
+        // frame, and stays black once the tab is shown, so hold off until
+        // the page is actually visible.
+        while (document.visibilityState !== "visible") {
+          say("waiting for this tab to be visible…");
+          await new Promise((resolve) =>
+            document.addEventListener("visibilitychange", resolve, {
+              once: true,
+            }),
+          );
+        }
+
+        // handle.start() parses the policy synchronously before its first await, so
+        // the main thread is blocked for a moment and whatever was last
+        // painted stays on screen. Get full bars and a message painted first:
+        // a rAF callback runs just before a paint, a timeout queued from it
+        // runs just after.
+        say("starting…");
+        await new Promise((resolve) =>
+          requestAnimationFrame(() => setTimeout(resolve)),
+        );
+
+        // Exposed so the app can be stopped from the console with
+        // `mapox.destroy()`.
+        const handle = new WebHandle();
+        window.mapox = handle;
+        await handle.start(document.getElementById("mapox-canvas"), policy, seed);
+        status.remove();
+
+        // A panic stops the app without rejecting anything, leaving the
+        // last frame frozen on the canvas; poll for it to say so.
+        const watch = setInterval(() => {
+          if (!handle.has_panicked()) return;
+          clearInterval(watch);
+          document.body.appendChild(status);
+          status.classList.add("error");
+          say(`the app crashed: ${handle.panic_message()}\nsee the console for the backtrace`);
+        }, 1000);
+      } catch (err) {
+        document.body.appendChild(status);
+        status.classList.add("error");
+        say(String(err.message ?? err));
+        throw err;
+      }
+    </script>
+  </body>
+</html>
