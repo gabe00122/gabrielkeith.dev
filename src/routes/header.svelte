@@ -83,15 +83,7 @@
 
 	.site-nav a[aria-current='page'] {
 		color: var(--accent);
-	}
-
-	.site-nav a[aria-current='page']::before {
-		content: '';
-		display: inline-block;
-		width: 6px;
-		height: 6px;
-		margin-right: 0.5em;
-		background: var(--accent);
-		vertical-align: 0.15em;
+		text-decoration: underline 2px;
+		text-underline-offset: 0.4em;
 	}
 </style>
