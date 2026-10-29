@@ -94,7 +94,6 @@
 		padding: 0.4rem;
 		background: var(--bg);
 		opacity: 0.85;
-		transition: opacity var(--transition);
 	}
 
 	.fullscreen-button:hover,

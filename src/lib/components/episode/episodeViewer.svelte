@@ -209,10 +209,6 @@
 		color: var(--muted);
 		font-size: var(--text-xs);
 		white-space: nowrap;
-		transition:
-			color var(--transition),
-			border-color var(--transition),
-			background var(--transition);
 	}
 
 	.episode-tab:hover {

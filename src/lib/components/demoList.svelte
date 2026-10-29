@@ -70,7 +70,6 @@
 		max-width: 100%;
 		border: var(--rule);
 		background: var(--bg-deep);
-		transition: border-color var(--transition);
 	}
 
 	.poster img {

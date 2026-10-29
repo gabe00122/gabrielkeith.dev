@@ -39,8 +39,6 @@
 		z-index: 10;
 		border-bottom: var(--rule);
 		background: var(--bg-deep);
-		/* Its own layer in page view transitions, so it holds still (see app.css) */
-		view-transition-name: site-header;
 	}
 
 	.site-header-inner {

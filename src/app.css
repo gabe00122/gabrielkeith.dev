@@ -33,7 +33,6 @@
 	--gutter: 1.5rem;
 	--measure: 42rem;
 	--rule: 2px solid var(--border-strong);
-	--transition: 0.15s ease;
 
 	/* Pinned site header row */
 	--header-height: 2.75rem;
@@ -252,9 +251,6 @@ button {
 	background: var(--surface);
 	color: var(--fg);
 	cursor: pointer;
-	transition:
-		color var(--transition),
-		border-color var(--transition);
 }
 
 button:hover {
@@ -461,7 +457,6 @@ input[type='range'] {
 	left: -1.1em;
 	color: var(--muted);
 	opacity: 0;
-	transition: opacity var(--transition);
 }
 
 .prose :where(h2, h3, h4):hover .icon-link::before,
@@ -485,43 +480,5 @@ input[type='range'] {
 @media (prefers-reduced-motion: no-preference) {
 	html {
 		scroll-behavior: smooth;
-	}
-
-	/* Page view transitions (started in +layout.svelte): a quick crossfade with
-	   the incoming page rising 4px. The header is its own layer and holds still. */
-	::view-transition-old(root) {
-		animation: page-fade-out var(--transition) both;
-	}
-
-	::view-transition-new(root) {
-		animation: page-fade-in var(--transition) both;
-	}
-}
-
-::view-transition-group(site-header),
-::view-transition-old(site-header),
-::view-transition-new(site-header) {
-	animation: none;
-	mix-blend-mode: normal;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	::view-transition-group(*),
-	::view-transition-old(*),
-	::view-transition-new(*) {
-		animation: none !important;
-	}
-}
-
-@keyframes page-fade-out {
-	to {
-		opacity: 0;
-	}
-}
-
-@keyframes page-fade-in {
-	from {
-		opacity: 0;
-		transform: translateY(4px);
 	}
 }
