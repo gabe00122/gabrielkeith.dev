@@ -48,11 +48,10 @@
 }
 
 html {
-	/* No rubber-band overscroll: it would reveal --bg above the darker header */
-	overscroll-behavior-y: none;
 	/* Anchor jumps land below the pinned header */
 	scroll-padding-top: var(--header-height);
-	background: var(--bg);
+	/* Shows only in rubber-band overscroll; matches the header so the stretch blends in */
+	background: var(--bg-deep);
 	color: var(--fg);
 	font-family: var(--font-sans);
 	font-size: 100%;
@@ -253,10 +252,14 @@ button {
 	background: var(--surface);
 	color: var(--fg);
 	cursor: pointer;
+	transition:
+		color var(--transition),
+		border-color var(--transition);
 }
 
 button:hover {
 	border-color: var(--muted);
+	color: var(--accent);
 }
 
 select,
@@ -466,8 +469,59 @@ input[type='range'] {
 	opacity: 1;
 }
 
+/* Display math (KaTeX, stylesheet loaded by the posts layout). Wide equations
+   scroll sideways instead of overflowing the column on narrow screens; the
+   vertical padding keeps tall glyphs and the scrollbar from clipping. */
+.prose .katex-display {
+	margin: 1.5rem 0;
+	padding-block: 0.5rem;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+}
+
+/* Motion ----------------------------------------------------------------- */
+
 @media (prefers-reduced-motion: no-preference) {
 	html {
 		scroll-behavior: smooth;
+	}
+
+	/* Page view transitions (started in +layout.svelte): a quick crossfade with
+	   the incoming page rising 4px. The header is its own layer and holds still. */
+	::view-transition-old(root) {
+		animation: page-fade-out var(--transition) both;
+	}
+
+	::view-transition-new(root) {
+		animation: page-fade-in var(--transition) both;
+	}
+}
+
+::view-transition-group(site-header),
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none !important;
+	}
+}
+
+@keyframes page-fade-out {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes page-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(4px);
 	}
 }
