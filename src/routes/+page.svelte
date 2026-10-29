@@ -2,12 +2,11 @@
 	import Seo from '$lib/components/seo.svelte';
 	import PostList from '$lib/components/postList.svelte';
 	import DemoList from '$lib/components/demoList.svelte';
-	import { getDemos } from '$lib/demos';
+	import { demos } from '$lib/demos';
 	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 
-	const demos = getDemos();
 	let recent = $derived(data.posts.slice(0, 3));
 </script>
 
@@ -31,8 +30,8 @@
 	</section>
 
 	<section>
-		<h2 class="section-label">Try it</h2>
-		<DemoList {demos} headingLevel={3} />
+		<h2 class="section-label">Demos</h2>
+		<DemoList demos={Object.values(demos)} headingLevel={3} />
 	</section>
 </div>
 

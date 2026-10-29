@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { isoDate } from '$lib/utils';
 	import Seo from '$lib/components/seo.svelte';
-	import { getDemo, repoLabel } from '$lib/demos';
+	import { resolve } from '$app/paths';
+	import { demos, repoLabel } from '$lib/demos';
 	import type { Post } from '$lib/types';
 
 	let { data } = $props();
 
 	let meta = $derived(data.meta as Post);
-	let demo = $derived(meta.demo ? getDemo(meta.demo) : undefined);
+	let demo = $derived(meta.demo ? demos[meta.demo] : undefined);
 
 	type TocItem = { id: string; text: string; level: 2 | 3 };
 
@@ -39,11 +40,17 @@
 		activeId = computeActive(items);
 	});
 
+	// The active heading is the last one above the middle of the viewport. At the
+	// very bottom of the page, headings below the middle can never cross it, so
+	// fall back to the last heading that's on screen.
 	function computeActive(items: TocItem[]) {
+		const atBottom =
+			window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+		const line = atBottom ? window.innerHeight : window.innerHeight / 2;
 		let current = '';
 		for (const item of items) {
 			const el = document.getElementById(item.id);
-			if (el && el.getBoundingClientRect().top <= 120) current = item.id;
+			if (el && el.getBoundingClientRect().top <= line) current = item.id;
 		}
 		return current;
 	}
@@ -57,9 +64,9 @@
 
 <Seo title={meta.title} description={meta.description} type="article" />
 
-<div class="content-column">
+<div class="content-column post-column">
 	<article class="post">
-		<!-- Repo links are external; the demo href is already resolved. -->
+		<!-- Repo links are external. -->
 		<!-- eslint-disable svelte/no-navigation-without-resolve -->
 		<header class="post-header">
 			<h1 class="post-title">{meta.title}</h1>
@@ -77,7 +84,7 @@
 					</ul>
 				{/if}
 				{#if demo}
-					<a class="demo-link" href={demo.href}>▶ try the {demo.name} demo</a>
+					<a class="demo-link" href={resolve(demo.route)}>▶ try the {demo.name} demo</a>
 				{/if}
 			</div>
 		</header>
@@ -87,20 +94,23 @@
 			<data.content />
 		</div>
 	</article>
-</div>
 
-{#if tocItems.length >= 2}
-	<nav class="toc" aria-label="Table of contents">
-		<div class="toc-label meta">Contents</div>
-		<ul>
-			{#each tocItems as item (item.id)}
-				<li class:sub={item.level === 3} class:active={activeId === item.id}>
-					<a href={'#' + item.id}>{item.text}</a>
-				</li>
-			{/each}
-		</ul>
-	</nav>
-{/if}
+	{#if tocItems.length >= 2}
+		<!-- A full-height rail beside the article so the nav can stick within it -->
+		<aside class="toc-rail">
+			<nav class="toc" aria-label="Table of contents">
+				<div class="toc-label meta">Contents</div>
+				<ul>
+					{#each tocItems as item (item.id)}
+						<li class:sub={item.level === 3} class:active={activeId === item.id}>
+							<a href={'#' + item.id}>{item.text}</a>
+						</li>
+					{/each}
+				</ul>
+			</nav>
+		</aside>
+	{/if}
+</div>
 
 <style>
 	.post-title {
@@ -130,18 +140,29 @@
 		text-decoration: underline;
 	}
 
-	.toc {
+	.post-column {
+		position: relative;
+	}
+
+	.toc-rail {
 		display: none;
 	}
 
 	@media (min-width: 1280px) {
-		.toc {
+		/* Spans the column's padding box top to bottom, just right of the article */
+		.toc-rail {
 			display: block;
-			position: fixed;
-			top: 7rem;
-			left: calc(50% + 22.5rem);
+			position: absolute;
+			top: 2.5rem;
+			bottom: 4rem;
+			left: 100%;
 			width: min(16rem, calc(50vw - 22.5rem - 1.5rem));
-			max-height: calc(100vh - 10rem);
+		}
+
+		.toc {
+			position: sticky;
+			top: 2rem;
+			max-height: calc(100vh - 4rem);
 			overflow-y: auto;
 			overflow-x: hidden;
 			scrollbar-width: thin;

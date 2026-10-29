@@ -5,13 +5,13 @@
 	let { demos, headingLevel = 2 }: { demos: Demo[]; headingLevel?: 2 | 3 } = $props();
 </script>
 
-<!-- Demo hrefs are already resolved; repo links are external. -->
+<!-- Repo links are external. -->
 <!-- eslint-disable svelte/no-navigation-without-resolve -->
 <ul class="item-list">
-	{#each demos as demo (demo.id)}
+	{#each demos as demo (demo.route)}
 		<li class="entry">
 			<svelte:element this={`h${headingLevel}`} class="item-title">
-				<a href={demo.href}>▶ {demo.name}</a>
+				<a href={resolve(demo.route)}>▶ {demo.name}</a>
 			</svelte:element>
 			<p class="item-description">{demo.description}</p>
 			<ul class="link-row meta">

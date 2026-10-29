@@ -2,11 +2,11 @@
 	import { asset } from '$app/paths';
 	import Seo from '$lib/components/seo.svelte';
 	import DemoHeader from '$lib/components/demoHeader.svelte';
-	import { getDemo } from '$lib/demos';
+	import { demos } from '$lib/demos';
 	import Maximize from 'lucide-svelte/icons/maximize';
 	import Minimize from 'lucide-svelte/icons/minimize';
 
-	const demo = getDemo('mapox');
+	const demo = demos.mapox;
 
 	let stage: HTMLDivElement;
 	let isFullscreen = $state(false);

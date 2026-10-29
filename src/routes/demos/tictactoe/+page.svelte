@@ -5,9 +5,9 @@
 	import { initialGameState, turn } from './game';
 	import Cell from './cell.svelte';
 	import DemoHeader from '$lib/components/demoHeader.svelte';
-	import { getDemo } from '$lib/demos';
+	import { demos } from '$lib/demos';
 
-	const demo = getDemo('tictactoe');
+	const demo = demos.tictactoe;
 
 	async function onCellClick(cellNumber: number) {
 		const isValidAction = game.board[cellNumber] === undefined;
