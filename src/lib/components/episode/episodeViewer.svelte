@@ -185,7 +185,7 @@
 
 <style>
 	.episode-viewer {
-		margin-block: var(--pico-block-spacing-vertical, 1rem);
+		margin-block: 1.5rem;
 	}
 
 	.episode-card {
@@ -199,15 +199,10 @@
 	.episode-tabs {
 		display: flex;
 		overflow-x: auto;
-		border-bottom: 1px solid var(--pico-border-color);
+		border-bottom: 1px solid var(--border-strong);
 	}
 
 	.episode-tab {
-		/* Pico styles a bare <button> as a filled primary button, which locally
-		   redefines --pico-color (to the inverse text color, #000 in dark mode).
-		   Reset it so var(--pico-color) below resolves to the themed page text. */
-		--pico-color: inherit;
-		--pico-background-color: transparent;
 		box-shadow: none;
 		flex: 0 0 auto;
 		width: auto;
@@ -217,7 +212,7 @@
 		border-bottom: 2px solid transparent;
 		border-radius: 0;
 		background: transparent;
-		color: var(--pico-muted-color);
+		color: var(--muted);
 		font-size: 0.8rem;
 		font-weight: 500;
 		white-space: nowrap;
@@ -229,18 +224,18 @@
 	}
 
 	.episode-tab:hover {
-		color: var(--pico-color);
-		background: color-mix(in srgb, var(--pico-color) 7%, transparent);
+		color: var(--fg);
+		background: color-mix(in srgb, var(--fg) 7%, transparent);
 	}
 
 	.episode-tab.selected {
-		color: var(--pico-primary);
-		border-bottom-color: var(--pico-primary);
-		background: color-mix(in srgb, var(--pico-primary) 10%, transparent);
+		color: var(--accent);
+		border-bottom-color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
 	}
 
 	.episode-tab.selected:hover {
-		background: color-mix(in srgb, var(--pico-primary) 16%, transparent);
+		background: color-mix(in srgb, var(--accent) 16%, transparent);
 	}
 
 	.toolbar {
@@ -249,7 +244,7 @@
 		gap: 0.5rem;
 		overflow-x: auto;
 		padding: 0.5rem 0.75rem;
-		border-bottom: 1px solid var(--pico-border-color);
+		border-bottom: 1px solid var(--border-strong);
 		font-size: 0.8rem;
 		min-height: var(--episode-toolbar-height);
 	}
@@ -259,7 +254,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		margin: 0;
-		color: var(--pico-muted-color);
+		color: var(--muted);
 	}
 
 	.toolbar select {
@@ -273,13 +268,13 @@
 	.graph-pane {
 		height: var(--episode-graph-height);
 		padding: 0.25rem 0.5rem;
-		border-bottom: 1px solid var(--pico-muted-border-color, var(--pico-border-color));
+		border-bottom: 1px solid var(--border);
 	}
 
 	.state {
 		padding: 2rem;
 		text-align: center;
-		color: var(--pico-muted-color);
+		color: var(--muted);
 	}
 	.loading-state {
 		display: flex;

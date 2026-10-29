@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
 	import Seo from '$lib/components/seo.svelte';
+	import DemoHeader from '$lib/components/demoHeader.svelte';
+	import { getDemo } from '$lib/demos';
 	import Maximize from 'lucide-svelte/icons/maximize';
 	import Minimize from 'lucide-svelte/icons/minimize';
+
+	const demo = getDemo('mapox');
 
 	let stage: HTMLDivElement;
 	let isFullscreen = $state(false);
@@ -27,12 +31,13 @@
 	description="Live multi-agent gridworld demo: a trained policy running in the browser via WebAssembly and WebGPU."
 />
 
-<div class="demo-page">
+<div class="mapox-page">
+	<DemoHeader {demo} />
 	<!-- The demo is a standalone eframe/wasm app served from static/mapox/. -->
 	<div class="demo-stage" bind:this={stage}>
 		<iframe class="demo-frame" src={asset('/mapox/index.html')} title="Mapox live demo"></iframe>
 		<button
-			class="fullscreen-button outline contrast"
+			class="fullscreen-button"
 			type="button"
 			onclick={toggleFullscreen}
 			aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
@@ -48,14 +53,18 @@
 </div>
 
 <style>
-	.demo-page {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-		/* Fill the viewport below the site header (~5rem tall). */
-		height: calc(100dvh - 5rem);
+	/* Pin the page to the viewport so the canvas fills exactly what's left
+	   below the site header and demo header, edge to edge */
+	:global(.site:has(.mapox-page)) {
+		height: 100dvh;
 		min-height: 24rem;
-		padding: 0 var(--pico-spacing) var(--pico-spacing);
+	}
+
+	.mapox-page {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
 	}
 
 	.demo-stage {
@@ -73,8 +82,8 @@
 		flex: 1;
 		width: 100%;
 		min-height: 0;
-		border: 1px solid var(--pico-muted-border-color);
-		border-radius: var(--pico-border-radius);
+		border: 0;
+		border-top: 1px solid var(--border);
 		background: black;
 	}
 
@@ -88,7 +97,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		background: var(--pico-background-color);
+		background: var(--bg);
 		opacity: 0.85;
 		transition: opacity 0.2s ease-in-out;
 	}

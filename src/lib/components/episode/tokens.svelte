@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { darkColor, lightColor, theme } from '$lib/theme';
 	import type { Episode } from './types';
 	import { getPolicyTokenMask, isMaskedPolicyToken } from './policyMask';
 
@@ -12,18 +11,11 @@
 		tokensHeight?: string;
 	}
 
-	type Theme = 'light' | 'dark';
 	type MetricValues = ArrayLike<number>;
 
 	const RAMP = {
-		light: {
-			seq: { l0: 0.96, l1: 0.8, c0: 0.02, c1: 0.13 },
-			div: { l0: 0.96, l1: 0.82, c1: 0.13 }
-		},
-		dark: {
-			seq: { l0: 0.22, l1: 0.46, c0: 0.01, c1: 0.12 },
-			div: { l0: 0.21, l1: 0.46, c1: 0.12 }
-		}
+		seq: { l0: 0.22, l1: 0.46, c0: 0.01, c1: 0.12 },
+		div: { l0: 0.21, l1: 0.46, c1: 0.12 }
 	} as const;
 
 	const HUE_SEQ = 255;
@@ -40,8 +32,6 @@
 
 	let tokenElements = $state<HTMLElement[]>([]);
 	let scrollContainer = $state<HTMLDivElement | null>(null);
-	let colorTheme = $derived<Theme>($theme === 'light' ? 'light' : 'dark');
-	let tokenTextColor = $derived(colorTheme === 'dark' ? darkColor : lightColor);
 	let metricValues = $derived(getMetricValues(episode, metricKey));
 	let policyTokenMask = $derived(getPolicyTokenMask(episode, metricKey));
 	let metricRange = $derived(getMetricRange(metricValues));
@@ -83,23 +73,23 @@
 		return min === Infinity ? null : { min, max };
 	}
 
-	function sequentialColor(value: number, min: number, max: number, theme: Theme, hue = HUE_SEQ) {
+	function sequentialColor(value: number, min: number, max: number, hue = HUE_SEQ) {
 		if (max === min) {
 			return 'transparent';
 		}
 
-		const colorRamp = RAMP[theme].seq;
+		const colorRamp = RAMP.seq;
 		const ratio = cl01((value - min) / (max - min));
 		return `oklch(${lerp(colorRamp.l0, colorRamp.l1, ratio)} ${lerp(colorRamp.c0, colorRamp.c1, ratio)} ${hue})`;
 	}
 
-	function divergingColor(value: number, min: number, max: number, theme: Theme) {
+	function divergingColor(value: number, min: number, max: number) {
 		const maxAbs = Math.max(Math.abs(min), Math.abs(max));
 		if (maxAbs === 0) {
 			return 'transparent';
 		}
 
-		const colorRamp = RAMP[theme].div;
+		const colorRamp = RAMP.div;
 		const scaledValue = Math.max(-1, Math.min(1, value / maxAbs));
 		const magnitude = Math.abs(scaledValue);
 		return `oklch(${lerp(colorRamp.l0, colorRamp.l1, magnitude)} ${colorRamp.c1 * magnitude} ${scaledValue >= 0 ? HUE_POS : HUE_NEG})`;
@@ -117,10 +107,10 @@
 		}
 
 		if (metricRange.min < 0 && metricRange.max > 0) {
-			return divergingColor(value, metricRange.min, metricRange.max, colorTheme);
+			return divergingColor(value, metricRange.min, metricRange.max);
 		}
 
-		return sequentialColor(value, metricRange.min, metricRange.max, colorTheme);
+		return sequentialColor(value, metricRange.min, metricRange.max);
 	}
 
 	function tokenIsMasked(index: number) {
@@ -191,11 +181,7 @@
 	});
 </script>
 
-<div
-	bind:this={scrollContainer}
-	class="tokens-pane"
-	style="--tokens-height: {tokensHeight}; --viz-token-text-color: {tokenTextColor};"
->
+<div bind:this={scrollContainer} class="tokens-pane" style="--tokens-height: {tokensHeight};">
 	<div class="tokens">
 		{#each episode.tokens as token, index (index)}
 			{@const masked = tokenIsMasked(index)}
@@ -230,7 +216,7 @@
 	}
 
 	.tokens span {
-		font-family: var(--pico-font-family-monospace);
+		font-family: var(--font-mono);
 
 		/* Inline backgrounds only paint the glyph's content box, which is shorter
 		   than the line box, so adjacent rows show a gap. Vertical padding grows
@@ -248,7 +234,7 @@
 		white-space: pre-wrap;
 
 		background-color: var(--viz-token-color);
-		color: var(--viz-token-text-color);
+		color: var(--fg);
 		cursor: pointer;
 	}
 
@@ -256,7 +242,7 @@
 	   so it never bleeds into neighbouring tokens and stays flush with the grid. */
 	.tokens span:hover,
 	.tokens span.hovered {
-		box-shadow: inset 0 0 0 2px var(--pico-primary);
+		box-shadow: inset 0 0 0 2px var(--accent);
 	}
 
 	.tokens span.masked {
@@ -272,12 +258,12 @@
 	   give it a solid accent fill with readable inverse text. Wins over hover via
 	   source order (equal specificity). */
 	.tokens span.selected {
-		background-color: var(--pico-primary);
-		color: var(--pico-primary-inverse);
+		background-color: var(--accent);
+		color: var(--accent-fg);
 	}
 
 	.tokens span:focus-visible {
-		outline: 2px solid var(--pico-primary);
+		outline: 2px solid var(--accent);
 		outline-offset: 2px;
 	}
 </style>

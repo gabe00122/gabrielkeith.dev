@@ -1,14 +1,20 @@
 <script lang="ts">
-	import { formatDate } from '$lib/utils';
+	import { isoDate } from '$lib/utils';
 	import Seo from '$lib/components/seo.svelte';
+	import { getDemo, repoLabel } from '$lib/demos';
+	import type { Post } from '$lib/types';
 
 	let { data } = $props();
+
+	let meta = $derived(data.meta as Post);
+	let demo = $derived(meta.demo ? getDemo(meta.demo) : undefined);
 
 	type TocItem = { id: string; text: string; level: 2 | 3 };
 
 	let proseEl: HTMLElement | undefined = $state();
 	let tocItems: TocItem[] = $state([]);
 	let activeId = $state('');
+	let minutes = $state(0);
 
 	function headingLabel(heading: Element): string {
 		const clone = heading.cloneNode(true) as HTMLElement;
@@ -28,6 +34,8 @@
 			level: h.tagName === 'H2' ? (2 as const) : (3 as const)
 		}));
 		tocItems = items;
+		const words = proseEl.textContent?.trim().split(/\s+/).length ?? 0;
+		minutes = Math.max(1, Math.round(words / 230));
 		activeId = computeActive(items);
 	});
 
@@ -47,14 +55,33 @@
 
 <svelte:window onscroll={onScroll} />
 
-<Seo title={data.meta.title} description={data.meta.description} type="article" />
+<Seo title={meta.title} description={meta.description} type="article" />
 
 <div class="content-column">
 	<article class="post">
-		<hgroup class="post-header">
-			<h1 class="post-title">{data.meta.title}</h1>
-			<p><time class="meta" datetime={data.meta.date}>{formatDate(data.meta.date)}</time></p>
-		</hgroup>
+		<!-- Repo links are external; the demo href is already resolved. -->
+		<!-- eslint-disable svelte/no-navigation-without-resolve -->
+		<header class="post-header">
+			<h1 class="post-title">{meta.title}</h1>
+			<div class="post-meta meta">
+				<ul class="link-row">
+					<li><time datetime={meta.date}>{isoDate(meta.date)}</time></li>
+					{#if minutes}<li>{minutes} min read</li>{/if}
+				</ul>
+				{#if meta.code?.length}
+					<ul class="link-row">
+						<li>code:</li>
+						{#each meta.code as url (url)}
+							<li><a href={url}>{repoLabel(url)} ↗</a></li>
+						{/each}
+					</ul>
+				{/if}
+				{#if demo}
+					<a class="demo-link" href={demo.href}>▶ try the {demo.name} demo</a>
+				{/if}
+			</div>
+		</header>
+		<!-- eslint-enable svelte/no-navigation-without-resolve -->
 
 		<div class="prose" bind:this={proseEl}>
 			<data.content />
@@ -76,19 +103,31 @@
 {/if}
 
 <style>
-	.post {
-		margin: 0;
-		padding: 0;
-		background: none;
-		box-shadow: none;
+	.post-title {
+		font-size: 1.75rem;
+		line-height: 1.25;
+		margin-bottom: 0.5rem;
 	}
 	.post-header {
 		margin-bottom: 2rem;
+		padding-bottom: 1.25rem;
+		border-bottom: var(--rule);
 	}
-	.post-title {
-		font-size: 2rem;
-		line-height: 1.25;
-		margin-bottom: 0.5rem;
+
+	.post-meta {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.35rem;
+	}
+
+	.demo-link {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.demo-link:hover {
+		text-decoration: underline;
 	}
 
 	.toc {
@@ -115,21 +154,20 @@
 		margin-bottom: 0.75rem;
 	}
 
-	/* Pico lays out nav ul/li as a flex row; this is a vertical list */
 	.toc ul {
 		display: block;
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		border-left: 1px solid var(--pico-muted-border-color);
+		border-left: 1px solid var(--border);
 	}
 
 	.toc li {
 		display: block;
 		margin: 0;
 		padding: 0.2rem 0 0.2rem 0.9rem;
-		border-left: 2px solid transparent;
-		margin-left: -1.5px;
+		border-left: 4px solid transparent;
+		margin-left: -2.5px;
 	}
 
 	.toc li.sub {
@@ -137,24 +175,25 @@
 	}
 
 	.toc li.active {
-		border-left-color: var(--pico-primary);
+		border-left-color: var(--accent);
 	}
 
 	.toc a {
 		display: inline-block;
 		padding: 0;
-		font-size: 0.875rem;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
 		line-height: 1.45;
-		color: var(--pico-muted-color);
+		color: var(--muted);
 		text-decoration: none;
 	}
 
 	.toc a:hover,
 	.toc a:focus-visible {
-		color: var(--pico-color);
+		color: var(--fg);
 	}
 
 	.toc li.active > a {
-		color: var(--pico-primary);
+		color: var(--accent);
 	}
 </style>

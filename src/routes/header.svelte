@@ -1,79 +1,101 @@
-<script>
-	import Sun from 'lucide-svelte/icons/sun';
-	import Moon from 'lucide-svelte/icons/moon';
-
-	import { theme, toggleTheme, darkColor, lightColor } from '$lib/theme';
-	import { onMount } from 'svelte';
+<script lang="ts">
+	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 
-	let buttonFillColor = $derived($theme === 'dark' ? darkColor : lightColor);
-	let scrolled = $state(false);
+	const links = [
+		{ href: resolve('/posts'), label: 'Posts' },
+		{ href: resolve('/demos'), label: 'Demos' },
+		{ href: resolve('/about'), label: 'About' }
+	];
 
-	onMount(() => {
-		const onScroll = () => {
-			scrolled = window.scrollY > 0;
-		};
-		onScroll();
-		window.addEventListener('scroll', onScroll, { passive: true });
-		return () => window.removeEventListener('scroll', onScroll);
-	});
+	let path = $derived(page.url.pathname);
 </script>
 
-<header class:scrolled>
-	<div class="container">
-		<nav aria-label="Main" lang="en">
-			<ul class="header-items">
-				<li class="title"><a class="contrast" href={resolve('/')}>Gabriel Keith</a></li>
-				<li><a class="contrast" lang="en" href={resolve('/about')}>About</a></li>
-				<li><a class="contrast" lang="en" href={resolve('/posts')}>Posts</a></li>
-				<li><a class="contrast" lang="en" href={resolve('/projects')}>Projects</a></li>
-			</ul>
-			<button onclick={toggleTheme} class="toggle-dark-button outline contrast">
-				{#if $theme === 'dark'}
-					<Sun color={buttonFillColor} fill={buttonFillColor} />
-				{:else}
-					<Moon color={buttonFillColor} fill={buttonFillColor} />
-				{/if}
-			</button>
-		</nav>
-	</div>
+<!-- Links are already resolved above. -->
+<!-- eslint-disable svelte/no-navigation-without-resolve -->
+<header class="site-header">
+	<nav class="site-header-inner" aria-label="Main">
+		<a class="site-name" href={resolve('/')}>Gabriel Keith</a>
+		<ul class="site-nav">
+			{#each links as link (link.href)}
+				<li>
+					<a href={link.href} aria-current={path.startsWith(link.href) ? 'page' : undefined}>
+						{link.label}
+					</a>
+				</li>
+			{/each}
+		</ul>
+	</nav>
 </header>
 
 <style>
-	.scrolled {
-		top: 0;
-		position: sticky;
-		backdrop-filter: blur(1rem);
-		z-index: 2;
-
-		background-color: var(--pico-header-background);
-		box-shadow: var(--pico-card-box-shadow);
-		border-bottom: var(--pico-border-width) solid transparent;
-		border-bottom-color: var(--pico-header-border-color);
-
-		transition:
-			border-top-color 0.4s ease-in-out,
-			box-shadow 0.4s ease-in-out;
+	.site-header {
+		border-bottom: var(--rule);
+		background: var(--bg-deep);
 	}
 
-	header .container {
-		padding-right: 0;
-	}
-
-	.header-items {
-		width: 100%;
+	.site-header-inner {
 		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		max-width: 64rem;
+		margin-inline: auto;
+		padding: 1.25rem var(--space);
 	}
 
-	.title {
+	.site-name {
 		margin-right: auto;
+		color: var(--fg);
+		font-family: var(--font-mono);
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		white-space: nowrap;
+		text-decoration: none;
 	}
 
-	.title a {
-		font-weight: bold;
+	.site-nav {
+		display: flex;
+		gap: 1.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
 	}
 
-	.toggle-dark-button {
-		border: none;
+	@media (max-width: 480px) {
+		.site-header-inner,
+		.site-nav {
+			gap: 1rem;
+		}
+	}
+
+	.site-nav li {
+		margin: 0;
+	}
+
+	.site-nav a {
+		color: var(--muted);
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		text-decoration: none;
+	}
+
+	.site-nav a:hover {
+		color: var(--fg);
+	}
+
+	.site-nav a[aria-current='page'] {
+		color: var(--accent);
+	}
+
+	.site-nav a[aria-current='page']::before {
+		content: '';
+		display: inline-block;
+		width: 6px;
+		height: 6px;
+		margin-right: 0.5em;
+		background: var(--accent);
+		vertical-align: 0.15em;
 	}
 </style>

@@ -69,16 +69,16 @@
 	}
 
 	.label {
-		color: var(--pico-muted-color);
+		color: var(--muted);
 		margin-right: 0.3rem;
 	}
 
 	.value {
-		font-family: var(--pico-font-family-monospace);
-		color: var(--pico-color);
+		font-family: var(--font-mono);
+		color: var(--fg);
 	}
 
 	.value.muted {
-		color: var(--pico-muted-color);
+		color: var(--muted);
 	}
 </style>

@@ -1,87 +1,54 @@
 <script lang="ts">
 	import Seo from '$lib/components/seo.svelte';
-	import { onMount } from 'svelte';
+	import PostList from '$lib/components/postList.svelte';
+	import DemoList from '$lib/components/demoList.svelte';
+	import { getDemos } from '$lib/demos';
+	import { resolve } from '$app/paths';
 
-	let video: HTMLVideoElement | undefined = $state();
+	let { data } = $props();
 
-	onMount(() => {
-		if (!video) return;
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-			video.pause();
-		} else {
-			// Half speed: ambient, and the loop seam comes around half as often
-			video.playbackRate = 0.5;
-		}
-	});
+	const demos = getDemos();
+	let recent = $derived(data.posts.slice(0, 3));
 </script>
 
 <Seo description="I teach agents from experience in social environments." />
 
-<div class="hero">
-	<!-- Decorative gridworld from the memory & communication experiments;
-	     swap for the live WASM sim when it's ready -->
-	<video
-		bind:this={video}
-		src="/hero/return_loop.mp4"
-		autoplay
-		muted
-		loop
-		playsinline
-		aria-hidden="true"
-	></video>
-	<div class="landing">
-		<h1>Gabriel Keith</h1>
-		<p>I teach agents from experience in social environments.</p>
-	</div>
+<div class="content-column">
+	<section>
+		<h1 class="home-name">Gabriel Keith</h1>
+		<p class="home-tagline">I teach agents from experience in social environments.</p>
+		<p class="home-bio">
+			Software engineer and self-taught ML researcher. I work on how memory, communication, and
+			cooperation emerge in multi-agent reinforcement learning, with agents trained from scratch and
+			with LLMs as social agents. <a href={resolve('/about')}>More about me</a>.
+		</p>
+	</section>
+
+	<section>
+		<h2 class="section-label">Recent posts</h2>
+		<PostList posts={recent} headingLevel={3} />
+		<a class="more-link" href={resolve('/posts')}>All posts →</a>
+	</section>
+
+	<section>
+		<h2 class="section-label">Try it</h2>
+		<DemoList {demos} headingLevel={3} />
+	</section>
 </div>
 
 <style>
-	.hero {
-		position: relative;
-		min-height: calc(100svh - 10rem);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-	}
-
-	.hero video {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		opacity: 0.24;
-		pointer-events: none;
-		-webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, black 30%, transparent 75%);
-		mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, black 30%, transparent 75%);
-	}
-
-	/* Decorative motion: respect reduced-motion, and the dark footage
-	   has no good light-mode treatment yet */
-	@media (prefers-reduced-motion: reduce) {
-		.hero video {
-			display: none;
-		}
-	}
-
-	:global(html[data-theme='light']) .hero video {
-		display: none;
-	}
-
-	.landing {
-		position: relative;
-		text-align: center;
-		padding: 0 var(--pico-spacing) 8vh;
-	}
-
-	.landing h1 {
-		--pico-font-size: 3rem;
-		font-size: 3rem;
+	.home-name {
+		font-size: 2.25rem;
 		margin-bottom: 0.25rem;
 	}
 
-	.landing p {
-		color: var(--pico-muted-color);
+	.home-tagline {
+		font-size: 1.25rem;
+		margin-bottom: 1rem;
+	}
+
+	.home-bio {
+		max-width: 36rem;
+		color: var(--muted);
 	}
 </style>

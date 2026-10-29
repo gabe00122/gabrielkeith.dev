@@ -161,7 +161,7 @@
 
 <style>
 	.arch-figure {
-		margin-block: var(--pico-block-spacing-vertical, 1.5rem);
+		margin-block: 1.5rem;
 		margin-inline: 0;
 
 		/* Forward pass + the two backward gradient streams. Shared by the
@@ -169,15 +169,8 @@
 		--fwd: #9aa1ab;
 		--base: #4faa3c;
 		--value: #d2473c;
-		--label: var(--pico-color);
-		--encode-fill: color-mix(in srgb, var(--value) 14%, var(--pico-background-color, Canvas));
-	}
-
-	/* Deeper accents read better on the light background. */
-	:global([data-theme='light']) .arch-figure {
-		--fwd: #5b626d;
-		--base: #3c8f2c;
-		--value: #c23a2f;
+		--label: var(--fg);
+		--encode-fill: color-mix(in srgb, var(--value) 14%, var(--bg));
 	}
 
 	.arch {
@@ -260,7 +253,7 @@
 		padding: 0;
 		list-style: none;
 		font-size: 0.85rem;
-		color: var(--pico-muted-color);
+		color: var(--muted);
 	}
 
 	.legend li {
@@ -329,6 +322,6 @@
 		margin: 0.5rem auto 0;
 		text-align: center;
 		font-size: 0.85rem;
-		color: var(--pico-muted-color);
+		color: var(--muted);
 	}
 </style>

@@ -19,23 +19,23 @@
 
 <style>
 	.collapse {
-		border: 1px solid var(--pico-muted-border-color);
-		border-radius: var(--pico-border-radius);
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
 		padding: 0;
-		margin-bottom: var(--pico-typography-spacing-vertical);
+		margin-bottom: var(--flow);
 	}
 
 	.collapse > summary {
-		padding: calc(var(--pico-spacing) * 0.75) var(--pico-spacing);
+		padding: calc(var(--space) * 0.75) var(--space);
 		margin: 0;
 	}
 
 	.collapse[open] > summary {
-		border-bottom: 1px solid var(--pico-muted-border-color);
+		border-bottom: 1px solid var(--border);
 	}
 
 	.collapse-content {
-		padding: var(--pico-spacing);
+		padding: var(--space);
 	}
 
 	.collapse-content > :global(:last-child) {

@@ -3,6 +3,10 @@ title: Memory and Implicit Communication
 description: Emergent multi-agent signaling with spatial memory
 date: '2026-04-09'
 published: true
+code:
+  - https://github.com/gabe00122/mapox-trainer
+  - https://github.com/gabe00122/mapox
+demo: mapox
 ---
 
 <script>

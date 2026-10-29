@@ -10,3 +10,9 @@ export function formatDate(date: string, dateStyle: DateStyle = 'medium', locale
 export function isMobile() {
 	return /Mobi/.test(window.navigator.userAgent);
 }
+
+/** Zero-padded YYYY-MM-DD, tolerant of frontmatter dates like '2024-5-30' */
+export function isoDate(date: string) {
+	const [year, month, day] = date.split('-');
+	return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}

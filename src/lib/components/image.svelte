@@ -26,7 +26,7 @@
 	}
 
 	.img {
-		border-radius: var(--pico-border-radius);
+		border-radius: var(--radius);
 		margin-left: auto;
 		margin-right: auto;
 		display: block;
@@ -39,7 +39,7 @@
 	}
 
 	img {
-		border-radius: var(--pico-border-radius);
+		border-radius: var(--radius);
 	}
 
 	img.right {

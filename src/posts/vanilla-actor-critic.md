@@ -9,6 +9,9 @@ categories:
   - actor critic
   - deep learning
 published: true
+code:
+  - https://github.com/gabe00122/tutorial_actor_critic
+demo: tictactoe
 ---
 
 <script>
@@ -309,4 +312,4 @@ Here are just a few examples of possible improvements:
 - ** Use More Steps ** The algorithm in this post only describes single-step actor critics. Multi-step approaches are well studied and can speed up training, but this comes at the cost of introducing more bias and making the TD fixed point farther from the true optima.
 - ** Account for off-policy data ** This algorithm with only work for on policy training data, this is a serious limitation since data not generated with the current policy shouldn't be used for training. Techniques such as importance sampling can help account for off policy data.
 
-Using an Adam optimizer and vectorized training environments with some entropy regularization, I used this algorithm to learn tic-tac-toe, as can be seen in this [demo](/projects/tictactoe)
+Using an Adam optimizer and vectorized training environments with some entropy regularization, I used this algorithm to learn tic-tac-toe, as can be seen in this [demo](/demos/tictactoe)

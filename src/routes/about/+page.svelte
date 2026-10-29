@@ -27,9 +27,7 @@
 		<enhanced:img src="../../../static/profile.webp" alt="Gabriel Keith" class="profile-pic" />
 	</div>
 	<section>
-		<hgroup>
-			<h3>Contact</h3>
-		</hgroup>
+		<h2 class="section-label">Contact</h2>
 		<div class="contact-links">
 			<a href="https://github.com/gabe00122" aria-label="GitHub">
 				<svg
@@ -66,13 +64,12 @@
 	.bio {
 		display: flex;
 		align-items: flex-start;
-		gap: var(--pico-spacing);
+		gap: var(--space);
 	}
 	.profile-pic {
 		width: 200px;
 		min-width: 200px;
-		border-radius: var(--pico-border-radius);
-		box-shadow: var(--pico-box-shadow);
+		border-radius: var(--radius);
 	}
 	@media (max-width: 576px) {
 		.bio {
@@ -87,14 +84,14 @@
 	.contact-links {
 		display: flex;
 		align-items: center;
-		gap: var(--pico-spacing);
+		gap: var(--space);
 		flex-wrap: wrap;
 	}
 	.contact-links a {
-		color: var(--pico-muted-color);
+		color: var(--muted);
 	}
 	.contact-links a:hover,
 	.contact-links a:focus-visible {
-		color: var(--pico-primary);
+		color: var(--accent);
 	}
 </style>

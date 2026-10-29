@@ -53,7 +53,7 @@
 		{
 			key: 'value',
 			label: metricDetailLabel(metricKey),
-			color: 'var(--pico-primary)'
+			color: 'var(--accent)'
 		}
 	]);
 
@@ -223,19 +223,19 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 0.75rem;
-		color: var(--pico-muted-color);
+		color: var(--muted);
 	}
 
 	/* layerchart renders SVG marks with `.lc-*` classes; without the Tailwind
-	   chart-container we theme them here with Pico variables. */
+	   chart-container we theme them here with the site tokens. */
 	.metric-graph :global(.lc-spline-path),
 	.metric-graph :global(.lc-line-path) {
-		stroke: var(--pico-primary);
+		stroke: var(--accent);
 		stroke-width: 1.5px;
 	}
 
 	.metric-graph :global(.lc-axis-tick-label) {
-		fill: var(--pico-muted-color);
+		fill: var(--muted);
 		stroke: none;
 		stroke-width: 0;
 	}
@@ -252,16 +252,16 @@
 	.metric-graph :global(.lc-grid-y-line),
 	.metric-graph :global(.lc-rule-x-line),
 	.metric-graph :global(.lc-rule-y-line) {
-		stroke: var(--pico-border-color);
+		stroke: var(--border-strong);
 	}
 
 	.metric-graph :global(.lc-axis.placement-left .lc-axis-rule) {
-		stroke: var(--pico-muted-color);
+		stroke: var(--muted);
 		stroke-width: 1.5px;
 	}
 
 	.metric-graph :global(.lc-axis.placement-left .lc-axis-tick) {
-		stroke: var(--pico-muted-color);
+		stroke: var(--muted);
 		stroke-width: 1px;
 	}
 
@@ -270,19 +270,19 @@
 	}
 
 	.metric-graph :global(.metric-masked-range) {
-		fill: var(--pico-muted-border-color, var(--pico-border-color));
+		fill: var(--border);
 		opacity: 0.55;
 		pointer-events: none;
 	}
 
 	.metric-graph :global(.metric-selected-focus-line) {
-		stroke: var(--pico-color);
+		stroke: var(--fg);
 		stroke-width: 1.75px;
 		stroke-dasharray: none;
 	}
 
 	.metric-graph :global(.metric-hovered-focus-line) {
-		stroke: var(--pico-color);
+		stroke: var(--fg);
 		stroke-width: 1.5px;
 		stroke-dasharray: 4 4;
 	}

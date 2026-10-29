@@ -4,6 +4,10 @@
 	import { ModelWrapper } from './model';
 	import { initialGameState, turn } from './game';
 	import Cell from './cell.svelte';
+	import DemoHeader from '$lib/components/demoHeader.svelte';
+	import { getDemo } from '$lib/demos';
+
+	const demo = getDemo('tictactoe');
 
 	async function onCellClick(cellNumber: number) {
 		const isValidAction = game.board[cellNumber] === undefined;
@@ -94,54 +98,62 @@
 	/>
 </svelte:head>
 
-{#if gameStart}
-	<div class="control-group">
-		<button onclick={playAsX}>I want to go first</button>
-		<button onclick={playAsO}>I want to go second</button>
-	</div>
-{:else if loading}
-	<div class="control-group">Loading Model...</div>
-{:else}
-	<div class="board">
-		{#each game.board as boardCell, index (index)}
-			{#if aiHasMoved && showPreferences && previousGame.board[index] === undefined}
-				<Cell cell={boardCell} on:click={() => onCellClick(index)} preference={preferences[index]}
-				></Cell>
-			{:else}
-				<Cell cell={boardCell} on:click={() => onCellClick(index)}></Cell>
-			{/if}
-		{/each}
-	</div>
+<!-- Same full-width frame as the Mapox demo, so the DemoHeader lays out identically -->
+<div class="demo-page">
+	<DemoHeader {demo} />
 
-	{#if game.result !== 'ongoing'}
-		<div style="text-align: center;">
-			{#if game.result === 'draw'}
-				It's a draw!
-			{:else if playerWentFirst === (game.activePlayer === 'O')}
-				You won!
-			{:else}
-				You lost!
-			{/if}
+	{#if gameStart}
+		<div class="control-group">
+			<button onclick={playAsX}>I want to go first</button>
+			<button onclick={playAsO}>I want to go second</button>
 		</div>
-		<div class="control-group" style="margin-bottom: 20px;">
-			<button onclick={restart}>Play Again?</button>
+	{:else if loading}
+		<div class="control-group">Loading Model...</div>
+	{:else}
+		<div class="board">
+			{#each game.board as boardCell, index (index)}
+				{#if aiHasMoved && showPreferences && previousGame.board[index] === undefined}
+					<Cell cell={boardCell} on:click={() => onCellClick(index)} preference={preferences[index]}
+					></Cell>
+				{:else}
+					<Cell cell={boardCell} on:click={() => onCellClick(index)}></Cell>
+				{/if}
+			{/each}
+		</div>
+
+		{#if game.result !== 'ongoing'}
+			<div style="text-align: center;">
+				{#if game.result === 'draw'}
+					It's a draw!
+				{:else if playerWentFirst === (game.activePlayer === 'O')}
+					You won!
+				{:else}
+					You lost!
+				{/if}
+			</div>
+			<div class="control-group" style="margin-bottom: 20px;">
+				<button onclick={restart}>Play Again?</button>
+			</div>
+		{/if}
+
+		<div class="control-group">Critic Value: {value.toFixed(3)}</div>
+		<div class="control-group">
+			<label>
+				<input type="checkbox" name="english" bind:checked={showPreferences} />
+				Show preferences
+			</label>
+		</div>
+		<div class="centered-text">
+			This model was trained with self play in less than a minute on a RTX 3070
 		</div>
 	{/if}
-
-	<div class="control-group">Critic Value: {value.toFixed(3)}</div>
-	<div class="control-group">
-		<label>
-			<input type="checkbox" name="english" bind:checked={showPreferences} />
-			Show preferences
-		</label>
-	</div>
-	<div class="centered-text">
-		This model was trained with self play in less than a minute on a RTX 3070<br />
-		See training code on <a href="https://github.com/gabe00122/tictactoe-rl">github</a>
-	</div>
-{/if}
+</div>
 
 <style>
+	.demo-page {
+		padding-bottom: 4rem;
+	}
+
 	.board {
 		margin: 0 auto;
 		width: 300px;

@@ -24,7 +24,7 @@
 
 	.video-container video {
 		max-width: 100%;
-		border-radius: var(--pico-border-radius);
+		border-radius: var(--radius);
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
