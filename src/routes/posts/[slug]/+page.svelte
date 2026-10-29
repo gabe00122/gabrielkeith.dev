@@ -161,8 +161,8 @@
 
 		.toc {
 			position: sticky;
-			top: 2rem;
-			max-height: calc(100vh - 4rem);
+			top: calc(2rem + var(--header-height));
+			max-height: calc(100vh - 4rem - var(--header-height));
 			overflow-y: auto;
 			overflow-x: hidden;
 			scrollbar-width: thin;

@@ -30,6 +30,9 @@
 
 <style>
 	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 10;
 		border-bottom: var(--rule);
 		background: var(--bg-deep);
 	}
@@ -39,8 +42,9 @@
 		align-items: center;
 		gap: 1.5rem;
 		max-width: 64rem;
+		height: var(--header-height);
 		margin-inline: auto;
-		padding: 1.25rem var(--space);
+		padding-inline: var(--space);
 	}
 
 	.site-name {

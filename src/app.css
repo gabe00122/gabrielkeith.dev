@@ -29,6 +29,9 @@
 	--radius: 0;
 	--measure: 42rem;
 	--rule: 2px solid var(--border-strong);
+
+	/* Pinned site header row */
+	--header-height: 2.75rem;
 }
 
 /* Reset ------------------------------------------------------------------ */
@@ -42,6 +45,8 @@
 html {
 	/* No rubber-band overscroll: it would reveal --bg above the darker header */
 	overscroll-behavior-y: none;
+	/* Anchor jumps land below the pinned header */
+	scroll-padding-top: var(--header-height);
 	background: var(--bg);
 	color: var(--fg);
 	font-family: var(--font-sans);
