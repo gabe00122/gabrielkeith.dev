@@ -4,8 +4,10 @@
 	import { ModelWrapper } from './model';
 	import { initialGameState, turn } from './game';
 	import Cell from './cell.svelte';
+	import Seo from '$lib/components/seo.svelte';
 	import DemoHeader from '$lib/components/demoHeader.svelte';
 	import { demos } from '$lib/demos';
+	import { asset } from '$app/paths';
 
 	const demo = demos.tictactoe;
 
@@ -75,7 +77,7 @@
 	onMount(() => {
 		(async () => {
 			if (!model) {
-				model = await tf.loadGraphModel('/tictactoe/selfplay/model.json');
+				model = await tf.loadGraphModel(asset('/tictactoe/selfplay/model.json'));
 				modelWrapper = new ModelWrapper(model);
 
 				// Warm up the model
@@ -90,13 +92,10 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Reinforcement Learning tic tac toe demo</title>
-	<meta
-		name="description"
-		content="Challenge yourself against an (nearly) unbeatable Tic Tac Toe AI trained with Reinforcement Learning."
-	/>
-</svelte:head>
+<Seo
+	title="Tic-tac-toe Demo"
+	description="Challenge yourself against an (nearly) unbeatable Tic Tac Toe AI trained with Reinforcement Learning."
+/>
 
 <!-- Same full-width frame as the Mapox demo, so the DemoHeader lays out identically -->
 <div class="demo-page">
@@ -112,17 +111,18 @@
 	{:else}
 		<div class="board">
 			{#each game.board as boardCell, index (index)}
-				{#if aiHasMoved && showPreferences && previousGame.board[index] === undefined}
-					<Cell cell={boardCell} on:click={() => onCellClick(index)} preference={preferences[index]}
-					></Cell>
-				{:else}
-					<Cell cell={boardCell} on:click={() => onCellClick(index)}></Cell>
-				{/if}
+				{@const showPreference =
+					aiHasMoved && showPreferences && previousGame.board[index] === undefined}
+				<Cell
+					cell={boardCell}
+					preference={showPreference ? preferences[index] : undefined}
+					onclick={() => onCellClick(index)}
+				/>
 			{/each}
 		</div>
 
 		{#if game.result !== 'ongoing'}
-			<div style="text-align: center;">
+			<div class="control-group">
 				{#if game.result === 'draw'}
 					It's a draw!
 				{:else if playerWentFirst === (game.activePlayer === 'O')}
@@ -131,21 +131,21 @@
 					You lost!
 				{/if}
 			</div>
-			<div class="control-group" style="margin-bottom: 20px;">
+			<div class="control-group">
 				<button onclick={restart}>Play Again?</button>
 			</div>
 		{/if}
 
-		<div class="control-group">Critic Value: {value.toFixed(3)}</div>
+		<div class="control-group meta">Critic value: {value.toFixed(3)}</div>
 		<div class="control-group">
 			<label>
-				<input type="checkbox" name="english" bind:checked={showPreferences} />
+				<input type="checkbox" bind:checked={showPreferences} />
 				Show preferences
 			</label>
 		</div>
-		<div class="centered-text">
+		<p class="control-group meta">
 			This model was trained with self play in less than a minute on a RTX 3070
-		</div>
+		</p>
 	{/if}
 </div>
 
@@ -155,25 +155,21 @@
 	}
 
 	.board {
-		margin: 0 auto;
+		display: grid;
+		grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+		gap: 2px;
 		width: 300px;
 		height: 300px;
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		grid-template-rows: repeat(3, 1fr);
-		gap: 2px;
-
-		background-color: black;
+		margin: 0 auto var(--space);
+		border: 2px solid var(--border-strong);
+		background: var(--border-strong);
 	}
 
 	.control-group {
 		display: flex;
 		justify-content: center;
-		gap: 10px;
-		margin: 10px;
-	}
-
-	.centered-text {
+		gap: 0.75rem;
+		margin: 0 var(--space) 0.75rem;
 		text-align: center;
 	}
 </style>

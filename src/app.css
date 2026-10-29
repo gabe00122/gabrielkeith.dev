@@ -24,11 +24,16 @@
 		'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
 	--font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, monospace;
 
+	--text-xs: 0.8125rem;
+	--text-sm: 0.9375rem;
+	--tracking-caps: 0.08em;
+
 	--space: 1rem;
-	--flow: 1rem;
-	--radius: 0;
+	/* Side padding of the content column */
+	--gutter: 1.5rem;
 	--measure: 42rem;
 	--rule: 2px solid var(--border-strong);
+	--transition: 0.15s ease;
 
 	/* Pinned site header row */
 	--header-height: 2.75rem;
@@ -95,7 +100,7 @@ h6 {
 }
 
 h1 {
-	font-size: 2rem;
+	font-size: 1.75rem;
 }
 h2 {
 	font-size: 1.5rem;
@@ -115,7 +120,7 @@ pre,
 table,
 blockquote,
 details {
-	margin: 0 0 var(--flow);
+	margin: 0 0 var(--space);
 }
 
 ul,
@@ -198,7 +203,7 @@ hr {
 table {
 	width: 100%;
 	border-collapse: collapse;
-	font-size: 0.9375rem;
+	font-size: var(--text-sm);
 }
 
 th,
@@ -222,7 +227,7 @@ figcaption {
 	margin: 0.5rem 0;
 	color: var(--muted);
 	font-family: var(--font-mono);
-	font-size: 0.8125rem;
+	font-size: var(--text-xs);
 }
 
 summary {
@@ -287,13 +292,12 @@ input[type='range'] {
 .content-column {
 	flex: 1;
 	width: 100%;
-	max-width: calc(var(--measure) + 3rem);
+	max-width: calc(var(--measure) + 2 * var(--gutter));
 	margin-inline: auto;
-	padding: 2.5rem 1.5rem 4rem;
+	padding: 2.5rem var(--gutter) 4rem;
 }
 
 .page-title {
-	font-size: 1.75rem;
 	margin-bottom: 0.25rem;
 }
 
@@ -305,13 +309,32 @@ input[type='range'] {
 /* Metadata: dates, small labels */
 .meta {
 	font-family: var(--font-mono);
-	font-size: 0.8125rem;
+	font-size: var(--text-xs);
 	color: var(--muted);
 }
 
-/* Solid square marker on section labels and prose h2s */
+.caps {
+	letter-spacing: var(--tracking-caps);
+	text-transform: uppercase;
+}
+
+/* Lists used for layout rather than content */
+.bare-list,
+.item-list,
+.link-row {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+:where(.bare-list, .item-list, .link-row) > li {
+	margin: 0;
+}
+
+/* Solid square marker on section labels and prose headings, like a selected cell */
 .section-label::before,
-.prose h2::before {
+.prose h2::before,
+.prose h3::before {
 	content: '';
 	display: inline-block;
 	width: 0.5em;
@@ -321,12 +344,10 @@ input[type='range'] {
 	vertical-align: 0.1em;
 }
 
-/* Small heading over a group of entries (homepage) */
+/* Small heading over a group of entries (homepage, about) */
 .section-label {
 	margin: 3rem 0 1.25rem;
-	font-size: 0.8125rem;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
+	font-size: var(--text-xs);
 }
 
 /* Entry lists (posts, demos); entries highlight like a selected cell */
@@ -334,9 +355,6 @@ input[type='range'] {
 	display: flex;
 	flex-direction: column;
 	gap: 0.75rem;
-	margin: 0;
-	padding: 0;
-	list-style: none;
 }
 
 .entry {
@@ -368,22 +386,16 @@ input[type='range'] {
 
 .item-description {
 	color: var(--muted);
-	font-size: 0.9375rem;
+	font-size: var(--text-sm);
 	margin: 0;
 }
 
-/* Inline row of mono links: "code · post · demo" */
+/* Inline row of muted links: "code · post · demo" */
 .link-row {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: center;
 	gap: 0.25rem 1.25rem;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.link-row li {
-	margin: 0;
 }
 
 .link-row a {
@@ -400,7 +412,7 @@ input[type='range'] {
 	display: inline-block;
 	margin-top: 1.5rem;
 	font-family: var(--font-mono);
-	font-size: 0.8125rem;
+	font-size: var(--text-xs);
 }
 
 /* Long-form post content ------------------------------------------------- */
@@ -422,14 +434,12 @@ input[type='range'] {
 	margin-bottom: 0.75rem;
 }
 
+/* Subsections get an outlined marker */
 .prose h3::before {
-	content: '';
-	display: inline-block;
 	width: 0.45em;
 	height: 0.45em;
-	margin-right: 0.6em;
 	border: 2px solid var(--accent);
-	vertical-align: 0.1em;
+	background: none;
 }
 
 .prose :where(pre, code, kbd) {
@@ -448,7 +458,7 @@ input[type='range'] {
 	left: -1.1em;
 	color: var(--muted);
 	opacity: 0;
-	transition: opacity 0.15s ease-in-out;
+	transition: opacity var(--transition);
 }
 
 .prose :where(h2, h3, h4):hover .icon-link::before,

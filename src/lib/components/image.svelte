@@ -2,49 +2,29 @@
 	interface Props {
 		url?: string;
 		description?: string;
-		altText?: string;
-		align?: 'left' | 'center' | 'right';
+		alt?: string;
+		align?: 'center' | 'right';
 	}
 
-	let { url = '', description = '', altText = '', align }: Props = $props();
+	let { url = '', description = '', alt = '', align = 'center' }: Props = $props();
 </script>
 
 <figure>
-	<figcaption class="centered-text">{description}</figcaption>
-	<img
-		class="img"
-		src={url}
-		alt={altText}
-		class:centered={align === 'center'}
-		class:right={align === 'right'}
-	/>
+	<figcaption>{description}</figcaption>
+	<img src={url} {alt} class:right={align === 'right'} />
 </figure>
 
 <style>
-	.centered-text {
+	figcaption {
 		text-align: center;
 	}
 
-	.img {
-		border-radius: var(--radius);
-		margin-left: auto;
-		margin-right: auto;
-		display: block;
-	}
-
-	img.centered {
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
 	img {
-		border-radius: var(--radius);
+		display: block;
+		margin-inline: auto;
 	}
 
 	img.right {
-		display: block;
-		margin-left: auto;
 		margin-right: 0;
 	}
 </style>

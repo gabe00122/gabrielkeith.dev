@@ -25,7 +25,7 @@
 		flex-wrap: wrap;
 		align-items: baseline;
 		gap: 0.5rem 1.5rem;
-		padding: 1rem var(--space);
+		padding: var(--space);
 	}
 
 	.demo-title {

@@ -16,10 +16,14 @@
 <header class="site-header">
 	<nav class="site-header-inner" aria-label="Main">
 		<a class="site-name" href={resolve('/')}>Gabriel Keith</a>
-		<ul class="site-nav">
+		<ul class="site-nav bare-list">
 			{#each links as link (link.href)}
 				<li>
-					<a href={link.href} aria-current={path.startsWith(link.href) ? 'page' : undefined}>
+					<a
+						class="meta caps"
+						href={link.href}
+						aria-current={path.startsWith(link.href) ? 'page' : undefined}
+					>
 						{link.label}
 					</a>
 				</li>
@@ -60,9 +64,6 @@
 	.site-nav {
 		display: flex;
 		gap: 1.5rem;
-		margin: 0;
-		padding: 0;
-		list-style: none;
 	}
 
 	@media (max-width: 480px) {
@@ -72,16 +73,7 @@
 		}
 	}
 
-	.site-nav li {
-		margin: 0;
-	}
-
 	.site-nav a {
-		color: var(--muted);
-		font-family: var(--font-mono);
-		font-size: 0.8125rem;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
 		text-decoration: none;
 	}
 

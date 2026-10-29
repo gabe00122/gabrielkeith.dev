@@ -69,7 +69,7 @@
 		<!-- Repo links are external. -->
 		<!-- eslint-disable svelte/no-navigation-without-resolve -->
 		<header class="post-header">
-			<h1 class="post-title">{meta.title}</h1>
+			<h1 class="page-title">{meta.title}</h1>
 			<div class="post-meta meta">
 				<ul class="link-row">
 					<li><time datetime={meta.date}>{isoDate(meta.date)}</time></li>
@@ -99,8 +99,8 @@
 		<!-- A full-height rail beside the article so the nav can stick within it -->
 		<aside class="toc-rail">
 			<nav class="toc" aria-label="Table of contents">
-				<div class="toc-label meta">Contents</div>
-				<ul>
+				<div class="toc-label meta caps">Contents</div>
+				<ul class="bare-list">
 					{#each tocItems as item (item.id)}
 						<li class:sub={item.level === 3} class:active={activeId === item.id}>
 							<a href={'#' + item.id}>{item.text}</a>
@@ -113,11 +113,6 @@
 </div>
 
 <style>
-	.post-title {
-		font-size: 1.75rem;
-		line-height: 1.25;
-		margin-bottom: 0.5rem;
-	}
 	.post-header {
 		margin-bottom: 2rem;
 		padding-bottom: 1.25rem;
@@ -156,7 +151,8 @@
 			top: 2.5rem;
 			bottom: 4rem;
 			left: 100%;
-			width: min(16rem, calc(50vw - 22.5rem - 1.5rem));
+			/* Whatever's left between the column and the viewport edge, less a gutter */
+			width: min(16rem, 50vw - var(--measure) / 2 - 2 * var(--gutter));
 		}
 
 		.toc {
@@ -170,22 +166,14 @@
 	}
 
 	.toc-label {
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
 		margin-bottom: 0.75rem;
 	}
 
 	.toc ul {
-		display: block;
-		list-style: none;
-		margin: 0;
-		padding: 0;
 		border-left: 1px solid var(--border);
 	}
 
 	.toc li {
-		display: block;
-		margin: 0;
 		padding: 0.2rem 0 0.2rem 0.9rem;
 		border-left: 4px solid transparent;
 		margin-left: -2.5px;
@@ -201,9 +189,8 @@
 
 	.toc a {
 		display: inline-block;
-		padding: 0;
 		font-family: var(--font-mono);
-		font-size: 0.8125rem;
+		font-size: var(--text-xs);
 		line-height: 1.45;
 		color: var(--muted);
 		text-decoration: none;

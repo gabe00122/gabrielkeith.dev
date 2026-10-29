@@ -162,7 +162,7 @@ When benchmarking the update function (the only place GRPO and PPO differ in thi
 <Image
   url="/blog/valm/vs_vt.webp"
   description="Wordle win rate across training; lines show group means and bands show the range across seeds."
-  altText="Four line charts compare Wordle win rate over 25,000 update batches. HL-Gauss and MSE perform nearly identically, approaching 99%. The value transformer learns faster and with less seed variance than the last-latent-only critic, and reaches about 99% versus about 97%. Monte Carlo reaches about 95% among surviving runs, behind the value transformer. Warm-start GRPO rises more slowly to about 96%, while cold-start GRPO remains near 0%."
+  alt="Four line charts compare Wordle win rate over 25,000 update batches. HL-Gauss and MSE perform nearly identically, approaching 99%. The value transformer learns faster and with less seed variance than the last-latent-only critic, and reaches about 99% versus about 97%. Monte Carlo reaches about 95% among surviving runs, behind the value transformer. Warm-start GRPO rises more slowly to about 96%, while cold-start GRPO remains near 0%."
 />
 
 Looking at solve rate, the comparison between HL-Gauss and MSE was a null result. I was not able to reproduce the result from the Stop Regressing paper (on the same environment!).
@@ -172,14 +172,14 @@ Every model trained with the value transformer was ahead of every model trained 
 <Image
   url="/blog/valm/vs_vt_reward.webp"
   description="Mean episode reward across training; lines show group means and bands show the range across seeds."
-  altText="Four line charts compare mean Wordle episode reward over 25,000 update batches. HL-Gauss and MSE overlap and approach 0.99. The value transformer learns faster and more consistently than the last-latent-only critic. Monte Carlo trails the value transformer, ending near 0.96 versus 0.99. Warm-start GRPO approaches 0.97 more slowly, while cold-start GRPO improves only from about 0.12 to 0.25, indicating gains in partial credit without consistent wins."
+  alt="Four line charts compare mean Wordle episode reward over 25,000 update batches. HL-Gauss and MSE overlap and approach 0.99. The value transformer learns faster and more consistently than the last-latent-only critic. Monte Carlo trails the value transformer, ending near 0.96 versus 0.99. Warm-start GRPO approaches 0.97 more slowly, while cold-start GRPO improves only from about 0.12 to 0.25, indicating gains in partial credit without consistent wins."
 />
 Total reward tells a similar story, although you can see that cold-start GRPO improves on partial credit but not on solve rate.
 
 <Image
   url="/blog/valm/vs_vt_turns.webp"
   description="Mean guesses per game across training; failures count as six guesses, lines show group means, and bands show the range across seeds."
-  altText="Four line charts compare guesses per Wordle game over 25,000 update batches. HL-Gauss and MSE fall from six guesses to about 3.6 and 3.7, respectively. The value transformer decreases faster and ends near 3.6, compared with about 3.8 for the last-latent-only critic. Monte Carlo ends near 4.4. Warm-start GRPO remains above 5.2 guesses and cold-start GRPO stays at six, while the value transformer falls to about 3.6."
+  alt="Four line charts compare guesses per Wordle game over 25,000 update batches. HL-Gauss and MSE fall from six guesses to about 3.6 and 3.7, respectively. The value transformer decreases faster and ends near 3.6, compared with about 3.8 for the last-latent-only critic. Monte Carlo ends near 4.4. Warm-start GRPO remains above 5.2 guesses and cold-start GRPO stays at six, while the value transformer falls to about 3.6."
 />
 
 Here, when plotting turns taken per game, HL-Gauss separates from MSE somewhat, although I'm not sure whether the difference is significant. Unlike PPO, where turns taken per game decreases as solve rate increases, GRPO stays relatively steady. This reflects the fact that GRPO didn't use discounting at turn boundaries, so it was actually incentivized to maximize information before solving the puzzle because this was the safest strategy.
@@ -187,7 +187,7 @@ Here, when plotting turns taken per game, HL-Gauss separates from MSE somewhat, 
 <Image
   url="/blog/valm/ev_mean_bands.webp"
   description="Critic explained variance during training; lines show seed means and bands show the range across seeds."
-  altText="Line chart comparing critic explained variance over 25,000 update batches. Both critics begin near 0.95 and fluctuate early, but the value transformer recovers more quickly and consistently, ending near 0.94 with a narrow seed range. The last-latent-only critic ends near 0.82 with a much wider seed range."
+  alt="Line chart comparing critic explained variance over 25,000 update batches. Both critics begin near 0.95 and fluctuate early, but the value transformer recovers more quickly and consistently, ending near 0.94 with a narrow seed range. The last-latent-only critic ends near 0.82 with a much wider seed range."
 />
 
 Comparing the value transformer and the last-latent-only model on explained variance, particularly at the end of training, the value transformer's critic had much higher explained variance.

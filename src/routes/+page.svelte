@@ -24,13 +24,13 @@
 	</section>
 
 	<section>
-		<h2 class="section-label">Recent posts</h2>
+		<h2 class="section-label caps">Recent posts</h2>
 		<PostList posts={recent} headingLevel={3} />
 		<a class="more-link" href={resolve('/posts')}>All posts →</a>
 	</section>
 
 	<section>
-		<h2 class="section-label">Demos</h2>
+		<h2 class="section-label caps">Demos</h2>
 		<DemoList demos={Object.values(demos)} headingLevel={3} />
 	</section>
 </div>

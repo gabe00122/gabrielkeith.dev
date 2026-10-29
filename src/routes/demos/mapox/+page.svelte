@@ -91,15 +91,10 @@
 		position: absolute;
 		top: 0.75rem;
 		right: 0.75rem;
-		width: auto;
-		margin: 0;
 		padding: 0.4rem;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
 		background: var(--bg);
 		opacity: 0.85;
-		transition: opacity 0.2s ease-in-out;
+		transition: opacity var(--transition);
 	}
 
 	.fullscreen-button:hover,

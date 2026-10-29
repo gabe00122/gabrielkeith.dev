@@ -189,8 +189,6 @@
 	}
 
 	.episode-card {
-		margin: 0;
-		padding: 0;
 		overflow: hidden;
 		--episode-graph-height: 7rem;
 		--episode-toolbar-height: 2.5rem;
@@ -203,24 +201,18 @@
 	}
 
 	.episode-tab {
-		box-shadow: none;
-		flex: 0 0 auto;
-		width: auto;
-		margin: 0;
+		flex: none;
 		padding: 0.5rem 0.9rem;
 		border: none;
 		border-bottom: 2px solid transparent;
-		border-radius: 0;
 		background: transparent;
 		color: var(--muted);
-		font-size: 0.8rem;
-		font-weight: 500;
+		font-size: var(--text-xs);
 		white-space: nowrap;
-		cursor: pointer;
 		transition:
-			color 0.15s ease,
-			border-color 0.15s ease,
-			background 0.15s ease;
+			color var(--transition),
+			border-color var(--transition),
+			background var(--transition);
 	}
 
 	.episode-tab:hover {
@@ -245,7 +237,7 @@
 		overflow-x: auto;
 		padding: 0.5rem 0.75rem;
 		border-bottom: 1px solid var(--border-strong);
-		font-size: 0.8rem;
+		font-size: var(--text-xs);
 		min-height: var(--episode-toolbar-height);
 	}
 
@@ -253,16 +245,11 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		margin: 0;
 		color: var(--muted);
 	}
 
 	.toolbar select {
-		width: auto;
-		margin: 0;
-		padding: 0.15rem 1.75rem 0.15rem 0.5rem;
-		font-size: 0.8rem;
-		height: auto;
+		padding: 0.15rem 0.5rem;
 	}
 
 	.graph-pane {
@@ -278,7 +265,6 @@
 	}
 	.loading-state {
 		display: flex;
-		box-sizing: border-box;
 		min-height: calc(
 			var(--episode-toolbar-height) + var(--episode-graph-height) + var(--tokens-height)
 		);

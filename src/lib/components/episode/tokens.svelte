@@ -225,12 +225,6 @@
 		padding: 0.25em 0;
 		box-decoration-break: clone;
 		-webkit-box-decoration-break: clone;
-
-		border: unset;
-		border-radius: unset;
-		outline: unset;
-		box-shadow: unset;
-		transition: unset;
 		white-space: pre-wrap;
 
 		background-color: var(--viz-token-color);
@@ -251,7 +245,7 @@
 
 	.tokens span.masked:hover,
 	.tokens span.masked.hovered {
-		box-shadow: unset;
+		box-shadow: none;
 	}
 
 	/* Selected: the committed token drives the detail panel + graph marker, so

@@ -108,7 +108,7 @@
 		<text class="label" x="490" y="710">Last Reward</text>
 	</svg>
 
-	<ul class="legend">
+	<ul class="legend bare-list">
 		<li class="box-base">
 			<svg class="swatch" viewBox="0 0 30 12" aria-hidden="true">
 				<rect x="4" y="0.75" width="22" height="10.5" rx="3" />
@@ -214,17 +214,21 @@
 		stroke-width: 1.5;
 	}
 
-	.box.base rect {
+	/* Box fills, shared by the diagram and the legend swatches */
+	.box.base rect,
+	.box-base .swatch rect {
 		fill: var(--base);
 		stroke: color-mix(in srgb, var(--base) 65%, #000);
 	}
 
-	.box.value rect {
+	.box.value rect,
+	.box-value .swatch rect {
 		fill: var(--value);
 		stroke: color-mix(in srgb, var(--value) 65%, #000);
 	}
 
-	.box.encode rect {
+	.box.encode rect,
+	.box-encode .swatch rect {
 		fill: var(--encode-fill);
 		stroke: var(--value);
 	}
@@ -250,9 +254,7 @@
 		gap: 0.5rem 1.25rem;
 		max-width: 30rem;
 		margin: 0.75rem auto 0;
-		padding: 0;
-		list-style: none;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
 		color: var(--muted);
 	}
 
@@ -281,21 +283,6 @@
 		stroke-width: 1;
 	}
 
-	.legend li.box-base .swatch rect {
-		fill: var(--base);
-		stroke: color-mix(in srgb, var(--base) 65%, #000);
-	}
-
-	.legend li.box-value .swatch rect {
-		fill: var(--value);
-		stroke: color-mix(in srgb, var(--value) 65%, #000);
-	}
-
-	.legend li.box-encode .swatch rect {
-		fill: var(--encode-fill);
-		stroke: var(--value);
-	}
-
 	.legend li.fwd .swatch {
 		color: var(--fwd);
 	}
@@ -315,13 +302,5 @@
 	.legend li.stopgrad .swatch .slash {
 		stroke: var(--label);
 		stroke-linecap: round;
-	}
-
-	figcaption {
-		max-width: 30rem;
-		margin: 0.5rem auto 0;
-		text-align: center;
-		font-size: 0.85rem;
-		color: var(--muted);
 	}
 </style>
