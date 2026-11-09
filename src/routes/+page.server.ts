@@ -1,7 +1,6 @@
-import type { Post } from '$lib/types';
+import { getPosts } from '$lib/posts.js';
 
-export async function load({ fetch }) {
-	const response = await fetch('/posts/api/posts');
-	const posts: Post[] = await response.json();
+export async function load() {
+  const posts = getPosts().slice(0, 3);
 	return { posts };
 }

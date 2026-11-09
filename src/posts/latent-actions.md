@@ -7,7 +7,6 @@ published: true
 
 <script>
     import Image from "$lib/components/image.svelte";
-    import EpisodeViewer from "$lib/components/episode/episodeViewer.svelte";
     import ArchitectureDiagram from "$lib/components/valmArchitecture.svelte";
 </script>
 

@@ -6,8 +6,6 @@
 	import { resolve } from '$app/paths';
 
 	let { data } = $props();
-
-	let recent = $derived(data.posts.slice(0, 3));
 </script>
 
 <Seo description="I teach agents from experience in social environments." />
@@ -25,7 +23,7 @@
 
 	<section>
 		<h2 class="section-label caps">Recent posts</h2>
-		<PostList posts={recent} headingLevel={3} />
+		<PostList posts={data.posts} headingLevel={3} />
 		<a class="more-link" href={resolve('/posts')}>All posts →</a>
 	</section>
 
