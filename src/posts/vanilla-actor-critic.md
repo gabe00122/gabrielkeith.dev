@@ -1,6 +1,6 @@
 ---
 title: Vanilla Actor Critic
-description: Implement a actor critic from scratch in jax
+description: Implement an actor-critic from scratch in JAX
 date: '2024-5-30'
 categories:
   - reinforcement learning

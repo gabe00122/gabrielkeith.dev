@@ -14,7 +14,7 @@ demo: mapox
     import Image from "$lib/components/image.svelte";
 </script>
 
-The two demos below preview the main result of this post: agents with no explicit communication channel can still use movement and visibility as a signaling mechanism based on their in-context spacial memory.
+The two demos below preview the main result of this post: agents with no explicit communication channel can still use movement and visibility as a signaling mechanism based on their in-context spatial memory.
 
 <VideoPlayer
     url="/blog/memorycomm/return_center.mp4"
@@ -22,7 +22,7 @@ The two demos below preview the main result of this post: agents with no explici
     alt="Multiple agents navigate a hand-crafted maze, digging through walls to converge on a hidden flag at the center of the map"
 />
 
-These agents haven't been trained on this map, have separate memory and rewards and yet surprisingly quickly they seem to come to a collective decision that they should explore the center of the map even though it is more costly then exploring the outside.
+These agents haven't been trained on this map, have separate memory and rewards and yet surprisingly quickly they seem to come to a collective decision that they should explore the center of the map even though it is more costly than exploring the outside.
 
 <VideoPlayer
     url="/blog/memorycomm/scouts_fork.mp4"

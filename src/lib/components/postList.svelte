@@ -9,7 +9,7 @@
 <ol class="item-list">
 	{#each posts as post (post.slug)}
 		<li class="entry">
-			<time class="meta" datetime={post.date}>{isoDate(post.date)}</time>
+			<time class="meta" datetime={isoDate(post.date)}>{isoDate(post.date)}</time>
 			<svelte:element this={`h${headingLevel}`} class="item-title">
 				<a href={resolve('/posts/[slug]', { slug: post.slug })}>{post.title}</a>
 			</svelte:element>

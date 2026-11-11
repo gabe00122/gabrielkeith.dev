@@ -1,4 +1,5 @@
 import type { Post } from '$lib/types';
+import { parsePostDate } from '$lib/site';
 
 /** Published posts, newest first */
 export function getPosts() {
@@ -19,7 +20,9 @@ export function getPosts() {
 		}
 	}
 
+	// parsePostDate rather than new Date(): unpadded dates like '2024-5-30' would
+	// otherwise parse as local time, or not at all outside V8
 	return posts.sort(
-		(first, second) => new Date(second.date).getTime() - new Date(first.date).getTime()
+		(first, second) => parsePostDate(second.date).getTime() - parsePostDate(first.date).getTime()
 	);
 }

@@ -6,10 +6,11 @@ Hosted here https://gabrielkeith.dev/
 
 - [SvelteKit](https://kit.svelte.dev/) (Svelte 5, runes) + TypeScript
 - [mdsvex](https://mdsvex.pngwn.io/) — Markdown posts that can embed Svelte components
-- [Pico CSS](https://picocss.com/) for base styling, with a dark/light theme toggle
+- Hand-written CSS in `src/app.css` (dark only, palette sampled from the Mapox tileset)
 - [Shiki](https://shiki.style/) (Dracula) for syntax highlighting
 - KaTeX (via `remark-math` + `rehype-katex-svelte`) for math
 - [TensorFlow.js](https://www.tensorflow.org/js) for the in-browser tic-tac-toe agent
+- A Rust/WebAssembly + WebGPU build of [Mapox](https://github.com/gabe00122/mapox) for the gridworld demo
 - Deployed to Cloudflare (`@sveltejs/adapter-cloudflare`)
 
 ## Running it
@@ -37,15 +38,22 @@ Other scripts:
 ```
 src/
   posts/            Blog posts (.md, processed by mdsvex)
+  notes/            Raw notes and drafts; not built or served
   routes/
-    posts/          Listing page + [slug] renderer + posts API endpoint
-    projects/       Interactive demos (e.g. tictactoe)
+    posts/          Listing page + [slug] renderer
+    demos/          Interactive demos (mapox, tictactoe)
+    projects/       Redirects from the old /projects URLs to /demos
+    rss.xml/        RSS feed of published posts
+    sitemap.xml/    Sitemap
   lib/
-    components/     Reusable components for posts (image, video, collapse, ...)
+    components/     Reusable components (post lists, image, video, SEO tags, ...)
+    posts.ts        Collects published posts at build time
+    demos.ts        Demo registry (name, route, repo, related posts)
     config.ts       Site title / description / URL
-    theme.ts        Theme store, persisted to localStorage
+  app.css           Base stylesheet and design tokens
 static/
   blog/             Post media (images, videos, posters)
+  mapox/            Mapox wasm build + policy weights
   tictactoe/        TF.js model weights
 scripts/            Build-time helpers
 ```
@@ -56,6 +64,25 @@ Add a Markdown file to `src/posts/`. The filename becomes the slug, so
 `src/posts/latent-actions.md` is served at `/posts/latent-actions`. Posts are
 discovered at build time with `import.meta.glob`, so a new file just shows up —
 no index to update.
+
+Frontmatter:
+
+```yaml
+---
+title: Memory and Implicit Communication
+description: One line, shown in post lists, the RSS feed and link previews
+date: '2026-04-09'
+published: true # false keeps it out of the lists, feed and sitemap
+code: # optional: repo links in the post header
+  - https://github.com/gabe00122/mapox
+demo: mapox # optional: a key from src/lib/demos.ts
+---
+```
+
+The page renders the title as its `<h1>`, so start the post body at `##`.
+
+Everything in `src/posts/` is bundled and shipped to the browser, published or
+not. Keep notes that aren't meant to be public in `src/notes/`.
 
 ## License
 

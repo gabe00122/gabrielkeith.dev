@@ -300,7 +300,9 @@ input[type='range'] {
 	margin-bottom: 0.25rem;
 }
 
-.page-subtitle {
+/* Scoped to the hgroup so the gap below outranks hgroup > :last-child above */
+.page-subtitle,
+hgroup > .page-subtitle {
 	color: var(--muted);
 	margin-bottom: 2.5rem;
 }
@@ -419,6 +421,8 @@ input[type='range'] {
 .prose {
 	font-size: 1.125rem;
 	line-height: 1.65;
+	/* A bare URL is one long word; let it break rather than widen the page on phones */
+	overflow-wrap: break-word;
 }
 
 .prose h2 {

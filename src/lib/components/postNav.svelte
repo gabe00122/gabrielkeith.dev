@@ -11,7 +11,7 @@
 		<a class="post-nav-cell {side}" href={resolve('/posts/[slug]', { slug: post.slug })}>
 			<span class="meta caps">{label}</span>
 			<span class="post-nav-title">{post.title}</span>
-			<time class="meta" datetime={post.date}>{isoDate(post.date)}</time>
+			<time class="meta" datetime={isoDate(post.date)}>{isoDate(post.date)}</time>
 		</a>
 	{:else}
 		<!-- Holds the grid position so the other cell stays on its side -->

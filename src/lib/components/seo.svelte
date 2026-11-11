@@ -60,7 +60,10 @@
 						url: `${siteOrigin}/`,
 						author: person
 					},
-					{ ...person, sameAs: ['https://github.com/gabe00122'] }
+					{
+						...person,
+						sameAs: ['https://github.com/gabe00122', 'https://www.linkedin.com/in/gabriel-keith/']
+					}
 				]
 			};
 		}

@@ -10,8 +10,10 @@
 </script>
 
 <figure>
-	<figcaption>{description}</figcaption>
-	<img src={url} {alt} class:right={align === 'right'} />
+	{#if description}
+		<figcaption>{description}</figcaption>
+	{/if}
+	<img src={url} {alt} decoding="async" class:right={align === 'right'} />
 </figure>
 
 <style>

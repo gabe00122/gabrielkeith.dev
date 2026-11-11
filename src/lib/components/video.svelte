@@ -12,7 +12,8 @@
 
 <figure>
 	<figcaption id="video-caption-{uid}">{description}</figcaption>
-	<video playsinline controls muted aria-describedby="video-caption-{uid}" {poster}>
+	<!-- The poster stands in until play, so a post with several clips fetches no video up front -->
+	<video playsinline controls muted preload="none" aria-describedby="video-caption-{uid}" {poster}>
 		<source src={url} type="video/mp4" />
 	</video>
 </figure>

@@ -40,27 +40,43 @@
 
 	async function playAsO() {
 		playerWentFirst = false;
-		await playAITurn();
+		// Leave the start screen first: if the model is still downloading, the
+		// "Loading" message shows until the AI can open
 		gameStart = false;
+		await playAITurn();
 	}
 
 	async function playAITurn() {
 		aiCalculating = true;
 
-		const result = await modelWrapper.act(game);
-		previousGame = game;
-		preferences = result.preferences;
-		value = result.value;
-		game = turn(game, result.action);
-
-		aiCalculating = false;
-		aiHasMoved = true;
+		try {
+			// Either button can be clicked before the model has arrived
+			const wrapper = await modelReady;
+			const result = await wrapper.act(game);
+			previousGame = game;
+			preferences = result.preferences;
+			value = result.value;
+			game = turn(game, result.action);
+			aiHasMoved = true;
+		} catch {
+			// The load failure is already on screen; a failed move leaves the board as it was
+		} finally {
+			aiCalculating = false;
+		}
 	}
 
-	let model: tf.GraphModel<string>;
-	let modelWrapper: ModelWrapper;
+	let modelWrapper: ModelWrapper | undefined;
+	let resolveModel: (wrapper: ModelWrapper) => void;
+	let rejectModel: (reason: unknown) => void;
+	const modelReady = new Promise<ModelWrapper>((resolve, reject) => {
+		resolveModel = resolve;
+		rejectModel = reject;
+	});
+	// Rejections are reported through loadFailed; this keeps one from going unhandled
+	modelReady.catch(() => {});
 
 	let loading = $state(true);
+	let loadFailed = $state(false);
 	let gameStart = $state(true);
 	let showPreferences = $state(false);
 	let aiHasMoved = $state(false);
@@ -75,18 +91,31 @@
 	let game = $state(initialGameState);
 
 	onMount(() => {
+		let unmounted = false;
+
 		(async () => {
-			if (!model) {
-				model = await tf.loadGraphModel(asset('/tictactoe/selfplay/model.json'));
+			try {
+				const model = await tf.loadGraphModel(asset('/tictactoe/selfplay/model.json'));
 				modelWrapper = new ModelWrapper(model);
 
 				// Warm up the model
-				await modelWrapper.act(game);
+				await modelWrapper.act(initialGameState);
+				// Navigated away mid-download: the cleanup below already ran without it
+				if (unmounted) {
+					modelWrapper.dispose();
+					return;
+				}
+
 				loading = false;
+				resolveModel(modelWrapper);
+			} catch (error) {
+				loadFailed = true;
+				rejectModel(error);
 			}
 		})();
 
 		return () => {
+			unmounted = true;
 			modelWrapper?.dispose();
 		};
 	});
@@ -94,7 +123,7 @@
 
 <Seo
 	title="Tic-tac-toe Demo"
-	description="Challenge yourself against an (nearly) unbeatable Tic Tac Toe AI trained with Reinforcement Learning."
+	description="Play against a (nearly) unbeatable tic-tac-toe agent trained with reinforcement learning."
 />
 
 <!-- Same full-width frame as the Mapox demo, so the DemoHeader lays out identically -->
@@ -106,8 +135,12 @@
 			<button onclick={playAsX}>I want to go first</button>
 			<button onclick={playAsO}>I want to go second</button>
 		</div>
+	{:else if loadFailed}
+		<div class="control-group" role="alert">
+			The model failed to load. Reload the page to try again.
+		</div>
 	{:else if loading}
-		<div class="control-group">Loading Model...</div>
+		<div class="control-group" role="status">Loading model…</div>
 	{:else}
 		<div class="board">
 			{#each game.board as boardCell, index (index)}

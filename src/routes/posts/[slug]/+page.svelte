@@ -76,7 +76,7 @@
 			<h1 class="page-title">{meta.title}</h1>
 			<div class="post-meta meta">
 				<ul class="link-row">
-					<li><time datetime={meta.date}>{isoDate(meta.date)}</time></li>
+					<li><time datetime={isoDate(meta.date)}>{isoDate(meta.date)}</time></li>
 					{#if minutes}<li>{minutes} min read</li>{/if}
 				</ul>
 				{#if meta.code?.length}
