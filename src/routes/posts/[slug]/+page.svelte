@@ -44,17 +44,21 @@
 		activeId = computeActive(items);
 	});
 
-	// The active heading is the last one above the middle of the viewport. At the
-	// very bottom of the page, headings below the middle can never cross it, so
-	// fall back to the last heading that's on screen.
+	// The active heading is the first one showing in the top half of the viewport,
+	// which is where a jump lands it; failing that, the last one above. At the very
+	// bottom of the page, headings below the middle can never get there, so fall
+	// back to the last heading that's on screen.
 	function computeActive(items: TocItem[]) {
 		const atBottom =
 			window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
 		const line = atBottom ? window.innerHeight : window.innerHeight / 2;
 		let current = '';
 		for (const item of items) {
-			const el = document.getElementById(item.id);
-			if (el && el.getBoundingClientRect().top <= line) current = item.id;
+			const top = document.getElementById(item.id)?.getBoundingClientRect().top;
+			if (top === undefined) continue;
+			if (top > line) break;
+			current = item.id;
+			if (top >= 0 && !atBottom) break;
 		}
 		return current;
 	}
