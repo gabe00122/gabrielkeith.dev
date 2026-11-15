@@ -13,7 +13,6 @@ export function GET() {
 		{ path: resolve('/'), lastmod: latest },
 		{ path: resolve('/posts'), lastmod: latest },
 		{ path: resolve('/demos') },
-		{ path: resolve('/about') },
 		...Object.values(demos).map((demo) => ({ path: resolve(demo.route) })),
 		...posts.map((post) => ({
 			path: resolve('/posts/[slug]', { slug: post.slug }),

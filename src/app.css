@@ -345,7 +345,7 @@ hgroup > .page-subtitle {
 	vertical-align: 0.1em;
 }
 
-/* Small heading over a group of entries (homepage, about) */
+/* Small heading over a group of entries (homepage) */
 .section-label {
 	margin: 3rem 0 1.25rem;
 	font-size: var(--text-xs);

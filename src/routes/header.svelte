@@ -4,8 +4,7 @@
 
 	const links = [
 		{ href: resolve('/posts'), label: 'Posts' },
-		{ href: resolve('/demos'), label: 'Demos' },
-		{ href: resolve('/about'), label: 'About' }
+		{ href: resolve('/demos'), label: 'Demos' }
 	];
 
 	let path = $derived(page.url.pathname);
